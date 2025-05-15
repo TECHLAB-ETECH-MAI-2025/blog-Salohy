@@ -1,34 +1,32 @@
-<!DOCTYPE html>
+{% extends 'base.html.twig' %}
 
-<title>Category</title>
+{% block title %}Category detail{% endblock %}
 
 {% block body %}
-    <h1>Category</h1>
+<div class="container mt-5">
+    <h1 class="mb-4">Category detail</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ category.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ category.title }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ category.description }}</td>
-            </tr>
-            <tr>
-                <th>CreateAt</th>
-                <td>{{ category.createAt ? category.createAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
+    <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <td>{{ category.id }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ category.title }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ category.description }}</td>
+        </tr>
+        <tr>
+            <th>Create</th>
+            <td>{{ category.createAt ? category.createAt|date('d/m/Y H:i') : '' }}</td>
+        </tr>
     </table>
 
-    <a href="{{ path('app_category_index') }}">back to list</a>
-
-    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
-
+    <a href="{{ path('app_category_index') }}" class="btn btn-outline-primary">Back to list</a>
+    <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-primary">Edit</a>
     {{ include('category/_delete_form.html.twig') }}
+</div>
 {% endblock %}

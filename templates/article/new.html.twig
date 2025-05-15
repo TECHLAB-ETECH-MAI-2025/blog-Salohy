@@ -1,11 +1,31 @@
-<!DOCTYPE html>
+{% extends 'base.html.twig' %}
 
-<title>New Article</title>
+{% block title %}Add a article{% endblock %}
 
 {% block body %}
-    <h1>Create new Article</h1>
+    <div class="text-center mb-4">
+        <h1 class="h4 text-muted">Add a article</h1>
+    </div>
 
-    {{ include('article/_form.html.twig') }}
+    <div class="mx-auto" style="max-width: 700px;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-    <a href="{{ path('app_article_index') }}">back to list</a>
+        <div class="mb-3">
+            {{ form_label(form.title, 'Title') }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Title of l\'article'}}) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.content, 'Content') }}
+            {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Content...'}}) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.categories, 'Categories') }}
+            {{ form_widget(form.categories, {'attr': {'class': 'form-select'}}) }}
+        </div>
+
+        <button class="btn btn-primary">Add the article</button>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

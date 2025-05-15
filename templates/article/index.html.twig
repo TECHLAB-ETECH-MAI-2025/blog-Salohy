@@ -1,39 +1,37 @@
-<!DOCTYPE html>
+{% extends 'base.html.twig' %}
 
-<title>Article index</title>
+{% block title %}List of article{% endblock %}
 
 {% block body %}
-    <h1>Article index</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">List of article</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>CreateAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for article in articles %}
-            <tr>
-                <td>{{ article.id }}</td>
-                <td>{{ article.title }}</td>
-                <td>{{ article.content }}</td>
-                <td>{{ article.createAt ? article.createAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_article_show', {'id': article.id}) }}">show</a>
-                    <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="text-end mb-4">
+        <a href="{{ path('app_article_new') }}" class="btn btn-primary">Create a new article</a>
+    </div>
 
-    <a href="{{ path('app_article_new') }}">Create new</a>
+    {% if articles is empty %}
+        <p class="text-center text-muted">Any article found!</p>
+    {% else %}
+        <div class="row g-4">
+            {% for article in articles %}
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ article.title }}</h5>
+                            <p class="card-text">{{ article.content[:150] ~ '...' }}</p>
+                            <p class="card-text mt-auto">
+                                <small class="text-muted">Publish at{{ article.createAt ? article.createAt|date('d/m/Y H:i') : '' }}</small>
+                            </p>
+                            <div class="mt-3">
+                                <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary me-2">See</a>
+                                <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">Update</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

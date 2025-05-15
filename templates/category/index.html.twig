@@ -1,39 +1,37 @@
-<!DOCTYPE html>
+{% extends 'base.html.twig' %}
 
-<title>Category index</title>
+{% block title %}List of categories{% endblock %}
 
 {% block body %}
-    <h1>Category index</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">List of categories</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>CreateAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for category in categories %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.title }}</td>
-                <td>{{ category.description }}</td>
-                <td>{{ category.createAt ? category.createAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="text-end mb-4">
+        <a href="{{ path('app_category_new') }}" class="btn btn-primary">Create a new category</a>
+    </div>
 
-    <a href="{{ path('app_category_new') }}">Create new</a>
+    {% if categories is empty %}
+        <p class="text-center text-muted">Any category yet!</p>
+    {% else %}
+        <div class="row g-4">
+            {% for category in categories %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ category.title }}</h5>
+                            <p class="card-text text-muted">{{ category.description }}</p>
+                            <p class="card-text mt-auto">
+                                <small class="text-muted">Create {{ category.createAt ? category.createAt|date('d/m/Y H:i') : '' }}</small>
+                            </p>
+                            <div class="mt-3">
+                                <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-outline-primary me-2">See</a>
+                                <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

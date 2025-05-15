@@ -1,25 +1,24 @@
-
-{# templates/article/show.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1>{{ article.title }}</h1>
-        <p class="article-content">{{ article.content|nl2br }}</p>
+    <div class="mx-auto" style="max-width: 800px;">
+        <h1 class="mb-3">{{ article.title }}</h1>
+        <p class="fs-5">{{ article.content|nl2br }}</p>
 
         {% if article.categories|length > 0 %}
-            <p><strong>Catégories :</strong>
+            <div class="mb-3">
+                <strong>Categories :</strong>
                 {% for category in article.categories %}
                     <span class="badge bg-secondary">{{ category.title }}</span>
                 {% endfor %}
-            </p>
+            </div>
         {% endif %}
 
         <hr>
 
-        <h3>Commentaires ({{ article.comments|length }})</h3>
+        <h3>Comments ({{ article.comments|length }})</h3>
         {% if article.comments|length > 0 %}
             <ul class="list-group mb-4">
                 {% for comment in article.comments %}
@@ -31,59 +30,24 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p class="text-muted">Aucun commentaire pour le moment. Soyez le premier à réagir !</p>
+            <p class="text-muted">No comments yet!</p>
         {% endif %}
 
-        <button id="toggle-comment-form" class="btn btn-primary mb-3">Commenter</button>
+        <hr>
 
-        <div id="comment-form-container" class="comment-form" style="display: none;">
-            {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}}) }}
+        <h4>Add a comment</h4>
+        {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="mb-3">
+                {{ form_label(commentForm.author, 'Author') }}
+                {{ form_widget(commentForm.author, {'attr': {'class': 'form-control', 'placeholder': 'Your name'}}) }}
+            </div>
 
-                <div class="mb-3">
-                    {{ form_label(commentForm.author, 'Votre nom') }}
-                    {{ form_widget(commentForm.author, {
-                        'attr': {
-                            'class': 'form-control',
-                            'placeholder': 'Votre nom',
-                            'required': 'required'
-                        }
-                    }) }}
-                </div>
+            <div class="mb-3">
+                {{ form_label(commentForm.content, 'Comment') }}
+                {{ form_widget(commentForm.content, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Your comment'}}) }}
+            </div>
 
-                <div class="mb-3">
-                    {{ form_label(commentForm.content, 'Votre commentaire') }}
-                    {{ form_widget(commentForm.content, {
-                        'attr': {
-                            'class': 'form-control',
-                            'rows': 4,
-                            'placeholder': 'Votre commentaire...',
-                            'required': 'required'
-                        }
-                    }) }}
-                </div>
-
-                <button type="submit" class="btn btn-success">Publier le commentaire</button>
-            {{ form_end(commentForm) }}
-        </div>
+            <button class="btn btn-primary">Comment</button>
+        {{ form_end(commentForm) }}
     </div>
-
-    <script>
-        document.getElementById('toggle-comment-form').addEventListener('click', function () {
-            const form = document.getElementById('comment-form-container');
-            form.style.display = (form.style.display === 'none') ? 'block' : 'none';
-        });
-    </script>
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .article-content {
-            line-height: 1.8;
-            font-size: 1.1em;
-        }
-        .comment-form {
-            max-width: 700px;
-        }
-    </style>
 {% endblock %}
