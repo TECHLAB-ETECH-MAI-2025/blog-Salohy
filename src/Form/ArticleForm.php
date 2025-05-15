@@ -17,18 +17,18 @@ class ArticleForm extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre de l\'article',
+                'label' => 'Title of \'article',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Entrez le titre ici',
+                    'placeholder' => 'Enter the title here...',
                 ],
             ])
             ->add('content', TextareaType::class, [
-                'label' => 'Contenu',
+                'label' => 'Content',
                 'attr' => [
                     'class' => 'form-control',
                     'rows' => 8,
-                    'placeholder' => 'Écrivez votre article...',
+                    'placeholder' => 'Write your article... ',
                 ],
             ])
             ->add('categories', EntityType::class, [

@@ -18,22 +18,22 @@ class CommentForm extends AbstractType
     {
         $builder
             ->add('author', TextType::class, [
-                'label' => 'Nom de l\'auteur',
+                'label' => 'Name of the \'author',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Votre nom'
+                    'placeholder' => 'Your name'
                 ]
             ])
             ->add('content', TextareaType::class, [
-                'label' => 'Commentaire',
+                'label' => 'Comment',
                 'attr' => [
                     'class' => 'form-control',
                     'rows' => 5,
-                    'placeholder' => 'Votre commentaire ici...'
+                    'placeholder' => 'Your comment here...'
                 ]
             ])
             ->add('createdAt', DateTimeType::class, [
-                'label' => 'Date de création',
+                'label' => 'Creation date',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
             ]);

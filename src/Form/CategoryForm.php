@@ -18,7 +18,7 @@ class CategoryForm extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre de la catégorie',
+                'label' => 'Title of category',
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Titre',
@@ -29,11 +29,11 @@ class CategoryForm extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'rows' => 5,
-                    'placeholder' => 'Décrivez cette catégorie',
+                    'placeholder' => 'Description',
                 ],
             ])
             ->add('createAt', DateTimeType::class, [
-                'label' => 'Date de création',
+                'label' => 'Creation date',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
             ])
@@ -42,7 +42,7 @@ class CategoryForm extends AbstractType
                 'choice_label' => 'title',
                 'multiple' => true,
                 'expanded' => true,
-                'label' => 'Articles liés',
+                'label' => 'Related articles',
                 'required' => false,
                 'attr' => ['class' => 'form-check'],
                 'label_attr' => ['class' => 'form-check-label'],
