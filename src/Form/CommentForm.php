@@ -36,12 +36,6 @@ class CommentForm extends AbstractType
                 'label' => 'Date de création',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
-            ])
-            ->add('article', EntityType::class, [
-                'class' => Article::class,
-                'choice_label' => 'title',
-                'label' => 'Article associé',
-                'attr' => ['class' => 'form-select']
             ]);
     }
 

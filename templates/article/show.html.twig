@@ -1,34 +1,89 @@
-<!DOCTYPE html>
 
-<title>Article</title>
+{# templates/article/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
 
 {% block body %}
-    <h1>Article</h1>
+    <div class="container mt-4">
+        <h1>{{ article.title }}</h1>
+        <p class="article-content">{{ article.content|nl2br }}</p>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ article.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ article.title }}</td>
-            </tr>
-            <tr>
-                <th>Content</th>
-                <td>{{ article.content }}</td>
-            </tr>
-            <tr>
-                <th>CreateAt</th>
-                <td>{{ article.createAt ? article.createAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        {% if article.categories|length > 0 %}
+            <p><strong>Catégories :</strong>
+                {% for category in article.categories %}
+                    <span class="badge bg-secondary">{{ category.title }}</span>
+                {% endfor %}
+            </p>
+        {% endif %}
 
-    <a href="{{ path('app_article_index') }}">back to list</a>
+        <hr>
 
-    <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
+        <h3>Commentaires ({{ article.comments|length }})</h3>
+        {% if article.comments|length > 0 %}
+            <ul class="list-group mb-4">
+                {% for comment in article.comments %}
+                    <li class="list-group-item">
+                        <strong>{{ comment.author }}</strong>
+                        <small class="text-muted">– {{ comment.createdAt|date('d/m/Y H:i') }}</small><br>
+                        {{ comment.content }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">Aucun commentaire pour le moment. Soyez le premier à réagir !</p>
+        {% endif %}
 
-    {{ include('article/_delete_form.html.twig') }}
+        <button id="toggle-comment-form" class="btn btn-primary mb-3">Commenter</button>
+
+        <div id="comment-form-container" class="comment-form" style="display: none;">
+            {{ form_start(commentForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <div class="mb-3">
+                    {{ form_label(commentForm.author, 'Votre nom') }}
+                    {{ form_widget(commentForm.author, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Votre nom',
+                            'required': 'required'
+                        }
+                    }) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(commentForm.content, 'Votre commentaire') }}
+                    {{ form_widget(commentForm.content, {
+                        'attr': {
+                            'class': 'form-control',
+                            'rows': 4,
+                            'placeholder': 'Votre commentaire...',
+                            'required': 'required'
+                        }
+                    }) }}
+                </div>
+
+                <button type="submit" class="btn btn-success">Publier le commentaire</button>
+            {{ form_end(commentForm) }}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('toggle-comment-form').addEventListener('click', function () {
+            const form = document.getElementById('comment-form-container');
+            form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .article-content {
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        .comment-form {
+            max-width: 700px;
+        }
+    </style>
 {% endblock %}

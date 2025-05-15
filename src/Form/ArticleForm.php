@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
 use App\Entity\Article;
+use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -20,18 +20,16 @@ class ArticleForm extends AbstractType
                 'label' => 'Titre de l\'article',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Entrez un titre pour votre article',
-                    'required' => true
-                ]
+                    'placeholder' => 'Entrez le titre ici',
+                ],
             ])
             ->add('content', TextareaType::class, [
-                'label' => 'Contenu de l\'article',
+                'label' => 'Contenu',
                 'attr' => [
                     'class' => 'form-control',
-                    'rows' => 10,
-                    'placeholder' => 'Écrivez le contenu de votre article ici...',
-                    'required' => true
-                ]
+                    'rows' => 8,
+                    'placeholder' => 'Écrivez votre article...',
+                ],
             ])
             ->add('categories', EntityType::class, [
                 'class' => Category::class,
@@ -39,12 +37,6 @@ class ArticleForm extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Catégories',
-                'attr' => [
-                    'class' => 'form-check',
-                ],
-                'label_attr' => [
-                    'class' => 'form-check-label'
-                ]
             ]);
     }
 
