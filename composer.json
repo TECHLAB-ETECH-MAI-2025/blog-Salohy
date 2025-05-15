@@ -6,7 +6,8 @@
         "symfony/orm-pack": "^2.4",
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/orm": "^3.3",
-        "symfony/dotenv": "^7.2"
+        "symfony/dotenv": "^7.2",
+        "twig/twig": "^3.21"
     },
     "config": {
         "allow-plugins": {
