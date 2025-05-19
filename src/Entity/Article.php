@@ -175,4 +175,14 @@ class Article
 
         return $this;
     }
+    public function isLikedByIp(?string $ip): bool
+{
+    foreach ($this->getLikes() as $like) {
+        if ($like->getIpAddress() === $ip) {
+            return true;
+        }
+    }
+    return false;
+}
+
 }
