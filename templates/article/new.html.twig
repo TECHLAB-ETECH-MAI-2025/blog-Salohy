@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add a article{% endblock %}
+{% block title %}New article{% endblock %}
 
 {% block body %}
     <div class="text-center mb-4">
-        <h1 class="h4 text-muted">Add a article</h1>
+        <h2>Create a new article</h2>
     </div>
 
     <div class="mx-auto" style="max-width: 700px;">
@@ -12,7 +12,7 @@
 
         <div class="mb-3">
             {{ form_label(form.title, 'Title') }}
-            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Title of l\'article'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Title of \article'}}) }}
         </div>
 
         <div class="mb-3">
