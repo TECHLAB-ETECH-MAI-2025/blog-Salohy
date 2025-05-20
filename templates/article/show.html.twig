@@ -18,10 +18,10 @@
 
         <hr>
 
-        <h3>Comments ({{ article.comments|length }})</h3>
-        {% if article.comments|length > 0 %}
+        <h3>Comments ({{ pagination.getTotalItemCount() }})</h3>
+        {% if pagination.getTotalItemCount() > 0 %}
             <ul class="list-group mb-4">
-                {% for comment in article.comments %}
+                {% for comment in pagination %}
                     <li class="list-group-item">
                         <strong>{{ comment.author }}</strong>
                         <small class="text-muted">– {{ comment.createdAt|date('d/m/Y H:i') }}</small><br>
@@ -29,6 +29,10 @@
                     </li>
                 {% endfor %}
             </ul>
+
+            <div class="d-flex justify-content-center">
+                {{ knp_pagination_render(pagination) }} <!-- Affichage des liens de pagination -->
+            </div>
         {% else %}
             <p class="text-muted">No comments yet!</p>
         {% endif %}

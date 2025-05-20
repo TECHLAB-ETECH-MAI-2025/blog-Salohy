@@ -32,6 +32,9 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(categories) }}
+        </div>
     {% endif %}
 </div>
 {% endblock %}
