@@ -24,26 +24,26 @@ class ArticleRepository extends ServiceEntityRepository
             ->leftJoin('a.likes', 'l')
             ->groupBy('a.id');
 
-        // Appliquer la recherche si elle existe
+        // recherche 
         if ($search) {
             $qb->andWhere('a.title LIKE :search OR c.title LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        // Compter le nombre total d'articles
+        // nombre total d'articles
         $totalCount = $this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Compter le nombre d'articles filtrés
+        // nombre d'articles filtrés
         $filteredCountQb = clone $qb;
         $filteredCount = $filteredCountQb
             ->select('COUNT(DISTINCT a.id)')
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Appliquer le tri
+        // tri
         if ($orderColumn === 'commentsCount') {
             $qb->addSelect('COUNT(com.id) as HIDDEN commentsCount')
                ->orderBy('commentsCount', $orderDir);
@@ -56,7 +56,7 @@ class ArticleRepository extends ServiceEntityRepository
             $qb->orderBy($orderColumn, $orderDir);
         }
 
-        // Appliquer la pagination
+        // pagination
         $qb->setFirstResult($start)
            ->setMaxResults($length);
 
@@ -68,7 +68,7 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
-     * Recherche des articles par titre (pour les sélections dynamiques/autocomplétions).
+     * Recherche des articles par titre.
      */
     public function searchByTitle(string $query, int $limit = 10): array
     {

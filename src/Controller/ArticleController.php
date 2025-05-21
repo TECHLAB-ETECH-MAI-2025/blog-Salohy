@@ -42,7 +42,7 @@ final class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $article->setCreatedAt(new \DateTimeImmutable());
+            $article->setCreateAt(new \DateTime());
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -57,7 +57,7 @@ final class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_article_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, Article $article, EntityManagerInterface $entityManager, ArticleLikeRepository $likeRepository): Response
+    public function show(Request $request, Article $article, EntityManagerInterface $entityManager, ArticleLikeRepository $likeRepository, PaginatorInterface $paginator): Response
     {
         $comment = new Comment();
         $comment->setArticle($article);
@@ -90,43 +90,44 @@ final class ArticleController extends AbstractController
         return $this->render('article/show.html.twig', [
             'article' => $article,
             'commentForm' => $form->createView(),
-            'is_liked' => $isLiked
+            'is_liked' => $isLiked,
+            'pagination' => $pagination,
         ]);
     }
 
     #[Route('/{id}/like', name: 'app_article_like', methods: ['POST'])]
-public function like(Request $request, Article $article, EntityManagerInterface $em, ArticleLikeRepository $likeRepo): Response
-{
-    if (!$request->isXmlHttpRequest()) {
-        return $this->redirectToRoute('app_article_index');
+    public function like(Request $request, Article $article, EntityManagerInterface $em, ArticleLikeRepository $likeRepo): Response
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return $this->redirectToRoute('app_article_index');
+        }
+
+        $ip = $request->getClientIp();
+        $existingLike = $likeRepo->findOneBy([
+            'article' => $article,
+            'ipAddress' => $ip
+        ]);
+
+        $liked = false;
+
+        if ($existingLike) {
+            $em->remove($existingLike);
+        } else {
+            $like = new ArticleLike();
+            $like->setArticle($article);
+            $like->setIpAddress($ip);
+            $like->setCreatedAt(new \DateTimeImmutable());
+            $em->persist($like);
+            $liked = true;
+        }
+
+        $em->flush();
+
+        return $this->json([
+            'liked' => $liked,
+            'likes' => count($article->getLikes()),
+        ]);
     }
-
-    $ip = $request->getClientIp();
-    $existingLike = $likeRepo->findOneBy([
-        'article' => $article,
-        'ipAddress' => $ip
-    ]);
-
-    $liked = false;
-
-    if ($existingLike) {
-        $em->remove($existingLike);
-    } else {
-        $like = new ArticleLike();
-        $like->setArticle($article);
-        $like->setIpAddress($ip);
-        $like->setCreatedAt(new \DateTimeImmutable());
-        $em->persist($like);
-        $liked = true;
-    }
-
-    $em->flush();
-
-    return $this->json([
-        'liked' => $liked,
-        'likes' => count($article->getLikes()),
-    ]);
-}
 
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response

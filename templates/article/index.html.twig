@@ -37,7 +37,6 @@
                 <td>
                     <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary">See</a>
                     <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                    {% include 'article/_actions.html.twig' with {'article': article} %}
                 </td>
             </tr>
         {% endfor %}
