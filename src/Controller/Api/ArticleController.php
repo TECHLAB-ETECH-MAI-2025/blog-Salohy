@@ -66,29 +66,29 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/articles/search', name: 'api_articles_search', methods: ['GET'])]
-    public function search(Request $request, ArticleRepository $articleRepository): JsonResponse
-    {
-        $query = $request->query->get('q', '');
+	public function search(Request $request, ArticleRepository $articleRepository): JsonResponse
+	{
+		$query = $request->query->get('q', '');
 
-        if (strlen($query) < 2) {
-            return new JsonResponse(['results' => []]);
-        }
+		if (strlen($query) < 2) {
+			return new JsonResponse(['results' => []]);
+		}
 
-        $articles = $articleRepository->searchByTitle($query, 10);
+		$articles = $articleRepository->searchByTitle($query, 10);
 
-        $results = [];
-        foreach ($articles as $article) {
-            $categoryNames = array_map(fn($category) => $category->getTitle(), $article->getCategories()->toArray());
+		$results = [];
+		foreach ($articles as $article) {
+			$categoryNames = array_map(fn($category) => $category->getTitle(), $article->getCategories()->toArray());
 
-            $results[] = [
-                'id' => $article->getId(),
-                'title' => $article->getTitle(),
-                'categories' => $categoryNames
-            ];
-        }
+			$results[] = [
+				'id' => $article->getId(),
+				'title' => $article->getTitle(),
+				'categories' => $categoryNames
+			];
+		}
 
-        return new JsonResponse(['results' => $results]);
-    }
+		return new JsonResponse(['results' => $results]);
+	}
 
     #[Route('/article/{id}/comment', name: 'api_article_comment', methods: ['POST'])]
     public function addComment(Article $article, Request $request, EntityManagerInterface $entityManager): JsonResponse

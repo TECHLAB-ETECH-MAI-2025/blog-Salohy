@@ -24,7 +24,7 @@
                                 <small class="text-muted">Create {{ category.createAt ? category.createAt|date('d/m/Y H:i') : '' }}</small>
                             </p>
                             <div class="mt-3">
-                                <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-outline-primary me-2">See</a>
+                                <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-outline-custom me-2">Read</a>
                                 <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                             </div>
                         </div>

@@ -25,8 +25,8 @@
         </tr>
     </table>
 
-    <a href="{{ path('app_category_index') }}" class="btn btn-outline-primary">Back to list</a>
-    <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-primary">Edit</a>
+    <a href="{{ path('app_category_index') }}" class="btn btn-outline-custom">Back to list</a>
+    <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn-outline-custom">Edit</a>
     {{ include('category/_delete_form.html.twig') }}
 </div>
 {% endblock %}

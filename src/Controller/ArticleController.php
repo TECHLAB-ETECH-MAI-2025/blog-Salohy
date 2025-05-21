@@ -46,7 +46,7 @@ final class ArticleController extends AbstractController
             $entityManager->persist($article);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'article a été créé avec succès.');
+            $this->addFlash('success', 'The article is create succesfully');
             return $this->redirectToRoute('app_article_index');
         }
 
@@ -137,7 +137,7 @@ final class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'L\'article a été modifié avec succès.');
+            $this->addFlash('success', 'The article is update successfully');
             return $this->redirectToRoute('app_article_index');
         }
 
@@ -153,7 +153,7 @@ final class ArticleController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
             $entityManager->remove($article);
             $entityManager->flush();
-            $this->addFlash('success', 'L\'article a été supprimé avec succès.');
+            $this->addFlash('success', 'The article is delete successfully');
         }
 
         return $this->redirectToRoute('app_article_index');
