@@ -8,6 +8,7 @@ use App\Entity\ArticleLike;
 use App\Form\CommentType;
 use App\Repository\ArticleLikeRepository;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -65,29 +66,41 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/articles/search', name: 'api_articles_search', methods: ['GET'])]
-	public function search(Request $request, ArticleRepository $articleRepository): JsonResponse
+	#[Route('/search', name: 'api_combined_search', methods: ['GET'])]
+	public function combinedSearch(Request $request, ArticleRepository $articleRepository, CategoryRepository $categoryRepository): JsonResponse
 	{
 		$query = $request->query->get('q', '');
 
 		if (strlen($query) < 2) {
-			return new JsonResponse(['results' => []]);
+			return new JsonResponse([
+				'articles' => [],
+				'categories' => []
+			]);
 		}
 
-		$articles = $articleRepository->searchByTitle($query, 10);
+		$articles = $articleRepository->searchByTitle($query, 5);
+		$categories = $categoryRepository->searchByTitleOrDescription($query, 5);
 
-		$results = [];
-		foreach ($articles as $article) {
-			$categoryNames = array_map(fn($category) => $category->getTitle(), $article->getCategories()->toArray());
-
-			$results[] = [
+		$articleResults = array_map(function ($article) {
+			return [
 				'id' => $article->getId(),
 				'title' => $article->getTitle(),
-				'categories' => $categoryNames
+				'categories' => array_map(fn($c) => $c->getTitle(), $article->getCategories()->toArray())
 			];
-		}
+		}, $articles);
 
-		return new JsonResponse(['results' => $results]);
+		$categoryResults = array_map(function ($category) {
+			return [
+				'id' => $category->getId(),
+				'title' => $category->getTitle(),
+				'description' => $category->getDescription()
+			];
+		}, $categories);
+
+		return new JsonResponse([
+			'articles' => $articleResults,
+			'categories' => $categoryResults
+		]);
 	}
 
     #[Route('/article/{id}/comment', name: 'api_article_comment', methods: ['POST'])]
@@ -163,4 +176,5 @@ class ArticleController extends AbstractController
             'likesCount' => $article->getLikes()->count()
         ]);
     }
+	
 }

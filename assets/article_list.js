@@ -1,7 +1,4 @@
 import $ from 'jquery';
-import 'datatables.net';
-import 'datatables.net-bs5';
-import 'datatables.net-responsive-bs5';
 
 $(document).ready(function () {
     const $searchInput = $('#search-article');
@@ -19,47 +16,61 @@ $(document).ready(function () {
 
         searchTimeout = setTimeout(() => {
             $.ajax({
-                url: '/api/articles/search',
+                url: '/api/search', 
                 method: 'GET',
                 data: { q: query },
                 dataType: 'json',
                 success: function (response) {
-                    if (response.results && response.results.length > 0) {
-                        let html = '';
+                    let html = '';
 
-                        response.results.forEach(article => {
+                    if (response.articles.length > 0) {
+                        html += '<h6 class="dropdown-header">Articles</h6>';
+                        response.articles.forEach(article => {
                             html += `
-                                <div class="dropdown-item search-item" data-id="${article.id}" style="cursor: pointer;">
+                                <div class="dropdown-item search-item" data-type="article" data-id="${article.id}" style="cursor:pointer;">
                                     <strong>${article.title}</strong><br>
                                     <small>${article.categories.join(', ')}</small>
                                 </div>
                             `;
                         });
-
-                        $searchResults
-                            .html(html)
-                            .addClass('show')
-                            .css('display', 'block'); // Forcer l'affichage
-                    } else {
-                        $searchResults
-                            .html('<div class="dropdown-item text-muted">No results found</div>')
-                            .addClass('show')
-                            .css('display', 'block');
                     }
+
+                    if (response.categories.length > 0) {
+                        html += '<h6 class="dropdown-header mt-2">Categories</h6>';
+                        response.categories.forEach(category => {
+                            html += `
+                                <div class="dropdown-item search-item" data-type="category" data-id="${category.id}" style="cursor:pointer;">
+                                    <strong>${category.title}</strong><br>
+                                    <small>${category.description}</small>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    if (html === '') {
+                        html = '<div class="dropdown-item text-muted">No results found</div>';
+                    }
+
+                    $searchResults.html(html).addClass('show').css('display', 'block');
                 }
             });
         }, 300);
     });
 
-    // Clic sur un résultat
+    // Navigation selon le type (article ou category)
     $(document).on('click', '.search-item', function () {
-        const articleId = $(this).data('id');
-        if (articleId) {
-            window.location.href = `/article/${articleId}`;
+        const id = $(this).data('id');
+        const type = $(this).data('type');
+        if (id && type) {
+            if (type === 'article') {
+                window.location.href = `/article/${id}`;
+            } else if (type === 'category') {
+                window.location.href = `/category/${id}`;
+            }
         }
     });
 
-    // Cacher résultats si clic hors
+    // Fermer la recherche si on clique ailleurs
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.search-container').length) {
             $searchResults.removeClass('show').hide();

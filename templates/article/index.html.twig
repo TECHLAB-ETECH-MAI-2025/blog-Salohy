@@ -35,7 +35,7 @@
                 <td>{{ article.likes|length }}</td>
                 <td>{{ article.createAt ? article.createAt|date('d/m/Y H:i') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary">See</a>
+                    <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-custom me-2">Read</a>
                     <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 </td>
             </tr>
