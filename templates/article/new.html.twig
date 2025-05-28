@@ -3,6 +3,11 @@
 {% block title %}New article{% endblock %}
 
 {% block body %}
+  
+<div class="container mt-5">
+        
+
+
     <div class="text-center mb-4">
         <h2>Create a new article</h2>
     </div>
@@ -16,16 +21,17 @@
         </div>
 
         <div class="mb-3">
-            {{ form_label(form.content, 'Content') }}
-            {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Content...'}}) }}
-        </div>
+                {{ form_label(form.content, 'Content') }}
+                {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Content...'}}) }}
+            </div>
 
-        <div class="mb-3">
-            {{ form_label(form.categories, 'Categories') }}
-            {{ form_widget(form.categories, {'attr': {'class': 'form-select'}}) }}
-        </div>
+            <div class="mb-3">
+                {{ form_label(form.categories, 'Categories') }}
+                {{ form_widget(form.categories, {'attr': {'class': 'form-select'}}) }}
+            </div>
 
-        <button class="btn btn-primary">Add the article</button>
-        {{ form_end(form) }}
-    </div>
+            <button class="btn btn-outline-custom">Add the article</button>
+            {{ form_end(form) }}
+        </div>
+</div>
 {% endblock %}

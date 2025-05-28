@@ -66,42 +66,38 @@ class ArticleController extends AbstractController
         ]);
     }
 
-	#[Route('/search', name: 'api_combined_search', methods: ['GET'])]
-	public function combinedSearch(Request $request, ArticleRepository $articleRepository, CategoryRepository $categoryRepository): JsonResponse
-	{
-		$query = $request->query->get('q', '');
+    #[Route('/search', name: 'api_combined_search', methods: ['GET'])]
+    public function combinedSearch(
+        Request $request,
+        ArticleRepository $articleRepository,
+        CategoryRepository $categoryRepository
+    ): JsonResponse {
+        $query = $request->query->get('q', '');
 
-		if (strlen($query) < 2) {
-			return new JsonResponse([
-				'articles' => [],
-				'categories' => []
-			]);
-		}
+        if (strlen($query) < 2) {
+            return new JsonResponse([
+                'articles' => [],
+                'categories' => []
+            ]);
+        }
 
-		$articles = $articleRepository->searchByTitle($query, 5);
-		$categories = $categoryRepository->searchByTitleOrDescription($query, 5);
+        $articles = $articleRepository->searchByTitle($query, 5);
+        $categories = $categoryRepository->searchByTitleOrDescription($query, 5);
 
-		$articleResults = array_map(function ($article) {
-			return [
-				'id' => $article->getId(),
-				'title' => $article->getTitle(),
-				'categories' => array_map(fn($c) => $c->getTitle(), $article->getCategories()->toArray())
-			];
-		}, $articles);
+        return new JsonResponse([
+            'articles' => array_map(fn($article) => [
+                'id' => $article->getId(),
+                'title' => $article->getTitle(),
+                'categories' => array_map(fn($c) => $c->getTitle(), $article->getCategories()->toArray())
+            ], $articles),
 
-		$categoryResults = array_map(function ($category) {
-			return [
-				'id' => $category->getId(),
-				'title' => $category->getTitle(),
-				'description' => $category->getDescription()
-			];
-		}, $categories);
-
-		return new JsonResponse([
-			'articles' => $articleResults,
-			'categories' => $categoryResults
-		]);
-	}
+            'categories' => array_map(fn($category) => [
+                'id' => $category->getId(),
+                'title' => $category->getTitle(),
+                'description' => $category->getDescription()
+            ], $categories)
+        ]);
+    }
 
     #[Route('/article/{id}/comment', name: 'api_article_comment', methods: ['POST'])]
     public function addComment(Article $article, Request $request, EntityManagerInterface $entityManager): JsonResponse

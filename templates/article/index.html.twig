@@ -10,6 +10,9 @@
 {% block body %}
 <div class="container mt-5">
     <h1 class="text-center mb-4">List of Articles</h1>
+    <div class="text-end mb-4">
+        <a href="{{ path('app_article_new') }}" class="btn btn-outline-custom">Create a new article</a>
+    </div>
 
     <table id="articlesTable" class="table table-striped table-bordered">
         <thead>
@@ -37,6 +40,7 @@
                 <td>
                     <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-custom me-2">Read</a>
                     <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    
                 </td>
             </tr>
         {% endfor %}

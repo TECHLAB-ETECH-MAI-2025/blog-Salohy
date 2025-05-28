@@ -16,7 +16,7 @@ $(document).ready(function () {
 
         searchTimeout = setTimeout(() => {
             $.ajax({
-                url: '/api/search', 
+                url: '/api/search',
                 method: 'GET',
                 data: { q: query },
                 dataType: 'json',
@@ -27,7 +27,7 @@ $(document).ready(function () {
                         html += '<h6 class="dropdown-header">Articles</h6>';
                         response.articles.forEach(article => {
                             html += `
-                                <div class="dropdown-item search-item" data-type="article" data-id="${article.id}" style="cursor:pointer;">
+                                <div class="dropdown-item search-item" data-type="article" data-id="${article.id}">
                                     <strong>${article.title}</strong><br>
                                     <small>${article.categories.join(', ')}</small>
                                 </div>
@@ -39,7 +39,7 @@ $(document).ready(function () {
                         html += '<h6 class="dropdown-header mt-2">Categories</h6>';
                         response.categories.forEach(category => {
                             html += `
-                                <div class="dropdown-item search-item" data-type="category" data-id="${category.id}" style="cursor:pointer;">
+                                <div class="dropdown-item search-item" data-type="category" data-id="${category.id}">
                                     <strong>${category.title}</strong><br>
                                     <small>${category.description}</small>
                                 </div>
@@ -47,30 +47,32 @@ $(document).ready(function () {
                         });
                     }
 
-                    if (html === '') {
+                    if (!html) {
                         html = '<div class="dropdown-item text-muted">No results found</div>';
                     }
 
-                    $searchResults.html(html).addClass('show').css('display', 'block');
+                    $searchResults
+                        .html(html)
+                        .addClass('show')
+                        .css('display', 'block');
                 }
             });
         }, 300);
     });
 
-    // Navigation selon le type (article ou category)
+    // Clic sur un élément
     $(document).on('click', '.search-item', function () {
         const id = $(this).data('id');
         const type = $(this).data('type');
-        if (id && type) {
-            if (type === 'article') {
-                window.location.href = `/article/${id}`;
-            } else if (type === 'category') {
-                window.location.href = `/category/${id}`;
-            }
+
+        if (type === 'article') {
+            window.location.href = `/article/${id}`;
+        } else if (type === 'category') {
+            window.location.href = `/category/${id}`;
         }
     });
 
-    // Fermer la recherche si on clique ailleurs
+    // Cacher le dropdown quand on clique ailleurs
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.search-container').length) {
             $searchResults.removeClass('show').hide();
