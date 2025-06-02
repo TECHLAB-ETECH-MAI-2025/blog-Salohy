@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <h2 class="text-center text-primary mb-4">Sign in</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ path('app_login') }}">
+        <div class="mb-3">
+            <label for="inputEmail" class="form-label">Email</label>
+            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPassword" class="form-label">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" required>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
+            <label class="form-check-label" for="remember_me">Remember me</label>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="{{ path('app_register') }}" class="text-decoration-none">Don't have an account? Register</a><br>
+        <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none">Forgot password?</a>
+    </div>
+{% endblock %}

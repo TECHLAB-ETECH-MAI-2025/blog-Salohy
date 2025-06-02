@@ -1,4 +1,3 @@
-{# templates/base.html.twig #}
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,32 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     {% block stylesheets %}
-       <style>
+        <style>
+            body {
+                background-color: #E0E1DD;
+                color: #0D1B2A;
+            }
+
             .navbar-nav .nav-link.active {
-                color:rgb(248, 251, 252) !important;
+                color: #E0E1DD !important;
                 border-bottom: 2px solid #778DA9;
                 font-weight: bold;
             }
 
-            .search-container {
-                position: relative;
-            }
-
-            #search-results {
-                top: 100%;
-                left: 0;
-                z-index: 1000;
-                background-color: white;
-                border: 1px solid #ccc;
-                padding: 0.5rem;
-                max-height: 200px;
-                overflow-y: auto;
-                display: none;
-            }
-
-            #search-results.show {
-                display: block;
-            }
             .card.shadow-sm {
                 transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             }
@@ -42,130 +27,114 @@
                 transform: translateY(-6px);
                 box-shadow: 0 16px 25px rgba(0, 0, 0, 0.15);
             }
-            body {
-                background-color:rgb(240, 249, 252);
-                color:rgb(14, 23, 41);
-            }
 
             .card {
-                background-color:rgb(247, 251, 252);
-                
+                background-color: #F7FBFC;
             }
+
             .btn-outline-custom {
-                color:rgb(72, 115, 172);
-                border: 1px solid rgb(72, 115, 172);
+                color: #415A77;
+                border: 1px solid #415A77;
                 background-color: transparent;
                 transition: 0.3s ease;
             }
 
             .btn-outline-custom:hover {
-                background-color: rgb(72, 115, 172);
+                background-color: #415A77;
                 color: white;
             }
-                 .search-container {
-                    position: relative;
-                }
 
-                #search-results {
-                    top: 100%;
-                    left: 0;
-                    z-index: 1050;
-                    display: none;
-                    background-color: white;
-                    border: 1px solid #ccc;
-                    border-radius: 0.25rem;
-                    max-height: 300px;
-                    overflow-y: auto;
-                }
+            .auth-container {
+                background-color: #E0E1DD;
+                min-height: 100vh;
+            }
 
-                #search-results.show {
-                    display: block;
-                }
-
-                .search-item:hover {
-                    background-color: #f8f9fa;
-                }
+            .auth-box {
+                background-color: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                width: 100%;
+                max-width: 420px;
+            }
         </style>
     {% endblock %}
 </head>
+
 {% block javascripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.like-icon').forEach(icon => {
-        icon.addEventListener('click', function () {
-            const wrapper = this.closest('.like-wrapper');
-            const articleId = wrapper.dataset.articleId;
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.like-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const wrapper = this.closest('.like-wrapper');
+                const articleId = wrapper.dataset.articleId;
 
-            fetch(`/article/${articleId}/like`, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            }).then(response => response.json())
-              .then(data => {
-                  // Mettre à jour l’icône
-                  this.classList.toggle('fa-solid', data.liked);
-                  this.classList.toggle('fa-regular', !data.liked);
-                  this.classList.toggle('text-danger', data.liked);
-                  this.classList.toggle('text-muted', !data.liked);
+                fetch(`/article/${articleId}/like`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                }).then(response => response.json())
+                  .then(data => {
+                      this.classList.toggle('fa-solid', data.liked);
+                      this.classList.toggle('fa-regular', !data.liked);
+                      this.classList.toggle('text-danger', data.liked);
+                      this.classList.toggle('text-muted', !data.liked);
 
-                  // Mettre à jour le compteur
-                  let countSpan = wrapper.querySelector('.like-count');
-                  if (data.likes > 0) {
-                      if (!countSpan) {
-                          countSpan = document.createElement('span');
-                          countSpan.classList.add('like-count', 'ms-1');
-                          wrapper.appendChild(countSpan);
+                      let countSpan = wrapper.querySelector('.like-count');
+                      if (data.likes > 0) {
+                          if (!countSpan) {
+                              countSpan = document.createElement('span');
+                              countSpan.classList.add('like-count', 'ms-1');
+                              wrapper.appendChild(countSpan);
+                          }
+                          countSpan.innerText = data.likes;
+                      } else {
+                          if (countSpan) countSpan.remove();
                       }
-                      countSpan.innerText = data.likes;
-                  } else {
-                      if (countSpan) countSpan.remove();
-                  }
-              });
+                  });
+            });
         });
     });
-});
-</script>
-<script src="{{ asset('build/article_list.js') }}"></script>
-
+    </script>
+    <script src="{{ asset('build/article_list.js') }}"></script>
 {% endblock %}
 
 <body>
-    <nav class="navbar navbar-expand-lg" style="background-color:  #1B263B;">
-        <div class="container">
-            <a class="navbar-brand text-white fw-bold" href="{{ path('app_home') }}">My Blog</a>
+    {% set authRoutes = ['app_login', 'app_register', 'app_forgot_password_request', 'app_reset_password'] %}
+    {% if app.request.attributes.get('_route') not in authRoutes %}
+        <nav class="navbar navbar-expand-lg" style="background-color: #1B263B;">
+            <div class="container">
+                <a class="navbar-brand text-white fw-bold" href="{{ path('app_home') }}">My Blog</a>
 
-            <form class="d-flex ms-3 search-container position-relative" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" id="search-article">
-                <div id="search-results" class="dropdown-menu position-absolute w-100" style="top: 100%; z-index: 1000;"></div>
-            </form>
+                <form class="d-flex ms-3 search-container position-relative" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" id="search-article">
+                    <div id="search-results" class="dropdown-menu position-absolute w-100"></div>
+                </form>
 
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link  text-white {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_article' %}active{% endif %}" href="{{ path('app_article_index') }}">Articles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_category' %}active{% endif %}" href="{{ path('app_category_index') }}">Categories</a>
-                    </li>
-                </ul>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_article' %}active{% endif %}" href="{{ path('app_article_index') }}">Articles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_category' %}active{% endif %}" href="{{ path('app_category_index') }}">Categories</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+        </nav>
+    {% endif %}
+
+    <main class="{% if app.request.attributes.get('_route') in authRoutes %}auth-container d-flex align-items-center justify-content-center{% else %}container py-4{% endif %}">
+        <div class="{% if app.request.attributes.get('_route') in authRoutes %}auth-box{% endif %}">
+            {% block body %}{% endblock %}
         </div>
-    </nav>
-
-    
-
-    <main class="container">
-        {% block body %}{% endblock %}
     </main>
 
 </body>

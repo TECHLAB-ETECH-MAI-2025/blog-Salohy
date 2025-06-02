@@ -2,22 +2,70 @@
 
 {% block title %}Register{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .register-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: #1B263B;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        .btn-register {
+            background-color: #415A77;
+            border: none;
+        }
+
+        .btn-register:hover {
+            background-color: #778DA9;
+        }
+
+        .link-login {
+            color: #415A77;
+            text-decoration: none;
+        }
+
+        .link-login:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <div class="register-container">
+        <h2 class="text-center mb-4">Create Your Account</h2>
 
-    <h1>Register</h1>
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger">{{ flash_error }}</div>
+        {% endfor %}
 
-    {{ form_errors(registrationForm) }}
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.email, {
+                label: 'Email Address'
+            }) }}
+            {{ form_row(registrationForm.plainPassword.first, {
+                label: 'Password'
+            }) }}
+            {{ form_row(registrationForm.plainPassword.second, {
+                label: 'Confirm Password'
+            }) }}
+            {{ form_row(registrationForm.agreeTerms, {
+                label: 'I agree to the terms and conditions'
+            }) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+            <button type="submit" class="btn btn-register w-100 mt-3">Register</button>
+        {{ form_end(registrationForm) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+        <div class="text-center mt-4">
+            <a href="{{ path('app_login') }}" class="link-login">Already have an account? Log in</a>
+        </div>
+    </div>
 {% endblock %}
