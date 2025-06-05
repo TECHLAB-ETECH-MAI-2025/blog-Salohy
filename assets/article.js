@@ -23,16 +23,12 @@
 					dataType: 'json',
 					success: function(response) {
 						if (response.success) {
-							// Ajouter le nouveau commentaire à la liste
+							
 							$commentsList.prepend(response.commentHtml);
-
-							// Mettre à jour le compteur de commentaires
 							$commentsCount.text(response.commentsCount);
-
-							// Réinitialiser le formulaire
 							$commentForm[0].reset();
 
-							// Afficher un message de succès
+						
 							showAlert('success', 'Votre commentaire a été publié avec succès !');
 						} else {
                             showAlert('danger', response.error || `Une erreur est survenue lors de l'envoi du commentaire`);
@@ -49,7 +45,7 @@
 				});
 			});
 
-			// Système de "j'aime" en AJAX
+	
 			const $likeButton = $('.like-button');
 			const articleId = $likeButton.data('article-id');
 
@@ -70,7 +66,7 @@
 				});
 			});
 
-			// Fonction pour afficher des alertes
+		
 			function showAlert(type, message) {
 				const $alert = $(`
 					${message}
@@ -79,7 +75,7 @@
 
 				$('#alerts-container').append($alert);
 
-				// Faire disparaître l'alerte après 5 secondes
+				
 				setTimeout(() => {
 					$alert.alert('close');
 				}, 5000);

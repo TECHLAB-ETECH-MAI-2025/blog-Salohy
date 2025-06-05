@@ -2,8 +2,59 @@
 
 {% block title %}Login{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #0D1B2A, #415A77, #E0E1DD);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h2 {
+            color: #1B263B;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-custom {
+            background-color: #415A77;
+            color: white;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #1B263B;
+            color: white;
+        }
+
+        .form-check-label {
+            color: #415A77;
+        }
+
+        a.text-decoration-none {
+            color: #778DA9;
+        }
+
+        a.text-decoration-none:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <h2 class="text-center text-primary mb-4">Sign in</h2>
+<div class="login-container">
+    <h2 class="text-center">Sign in</h2>
 
     {% if error %}
         <div class="alert alert-danger">
@@ -29,11 +80,12 @@
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <button type="submit" class="btn btn-custom w-100">Login</button>
     </form>
 
     <div class="text-center mt-3">
         <a href="{{ path('app_register') }}" class="text-decoration-none">Don't have an account? Register</a><br>
         <a href="{{ path('app_forgot_password_request') }}" class="text-decoration-none">Forgot password?</a>
     </div>
+</div>
 {% endblock %}

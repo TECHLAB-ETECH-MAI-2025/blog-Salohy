@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+	{% block title %}Mon profil{% endblock %}
+
+	{% block body %}
+
+
+
+
+
+					Menu
+
+
+
+
+							 Mon profil
+
+
+							 Modifier mon profil
+
+
+							 Changer mon mot de passe
+
+
+							 Déconnexion
+
+
+
+
+
+
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+
+						{{ message }}
+
+
+				{% endfor %}
+			{% endfor %}
+
+
+
+					Mon profil
+
+
+
+
+							{{ app.user.firstName|slice(0, 1)|upper }}{{ app.user.lastName|slice(0, 1)|upper }}
+
+						{{ app.user.fullName }}
+						{{ app.user.email }}
+
+						{% if app.user.isVerified %}
+							Email vérifié
+						{% else %}
+							Email non vérifié
+						{% endif %}
+
+
+
+
+							Informations personnelles
+
+
+									Prénom
+									{{ app.user.firstName|default('Non renseigné') }}
+
+
+									Nom
+									{{ app.user.lastName|default('Non renseigné') }}
+
+
+									Email
+									{{ app.user.email }}
+
+
+
+
+							Informations du compte
+
+
+									Date d'inscription
+									{{ app.user.createdAt|date('d/m/Y') }}
+
+
+									Rôle
+
+										{% if 'ROLE_ADMIN' in app.user.roles %}
+											Administrateur
+										{% else %}
+											Utilisateur
+										{% endif %}
+
+
+
+									Statut
+
+										{% if app.user.isVerified %}
+											Email vérifié
+										{% else %}
+											Email non vérifié
+										{% endif %}
+
+Modifier mon profil
+
+
+
+
+
+
+	{% endblock %}
+
+	{% block stylesheets %}
+	{{ parent() }}
+
+	.avatar-placeholder {
+		width: 100px;
+		height: 100px;
+		background-color: #4361ee;
+		color: white;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto;
+	}
+
+	{% endblock %}
+
+
+
+
+

@@ -12,9 +12,9 @@ class LoginController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
-        }
+        //if ($this->getUser()) {
+         //   return $this->redirectToRoute('app_home');
+        //}
 
         return $this->render('security/login.html.twig', [
             'last_username' => $authenticationUtils->getLastUsername(),

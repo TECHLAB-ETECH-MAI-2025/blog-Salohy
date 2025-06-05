@@ -21,22 +21,6 @@ class RegistrationForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstName', TextType::class, [
-                'label' => 'Prénom',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Votre prénom'
-                ]
-            ])
-            ->add('lastName', TextType::class, [
-                'label' => 'Nom',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Votre nom'
-                ]
-            ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'attr' => [
@@ -75,7 +59,7 @@ class RegistrationForm extends AbstractType
                     'attr' => [
                         'class' => 'form-control',
                         'autocomplete' => 'new-password',
-                        'placeholder' => 'Minimum 8 caractères'
+                        'placeholder' => 'Minimum 8 charecters'
                     ],
                 ],
                 'second_options' => [
@@ -83,7 +67,7 @@ class RegistrationForm extends AbstractType
                     'attr' => [
                         'class' => 'form-control',
                         'autocomplete' => 'new-password',
-                        'placeholder' => 'Répétez votre mot de passe'
+                        'placeholder' => 'Confirm your password'
                     ],
                 ],
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',

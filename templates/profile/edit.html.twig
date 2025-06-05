@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+	{% block title %}Modifier mon profil{% endblock %}
+
+	{% block body %}
+
+
+
+
+
+					Menu
+
+
+
+
+							 Mon profil
+
+
+							 Modifier mon profil
+
+
+							 Changer mon mot de passe
+
+
+							 Déconnexion
+
+
+
+
+
+
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+
+						{{ message }}
+                      {% endfor %}
+			{% endfor %}
+
+
+
+					Modifier mon profil
+
+
+					{{ form_start(profileForm) }}
+
+
+								{{ form_label(profileForm.firstName) }}
+								{{ form_widget(profileForm.firstName) }}
+
+									{{ form_errors(profileForm.firstName) }}
+
+
+
+								{{ form_label(profileForm.lastName) }}
+								{{ form_widget(profileForm.lastName) }}
+
+									{{ form_errors(profileForm.lastName) }}
+
+
+
+
+							{{ form_label(profileForm.email) }}
+							{{ form_widget(profileForm.email) }}
+
+								{{ form_errors(profileForm.email) }}
+
+
+
+
+							Enregistrer les modifications
+
+					{{ form_end(profileForm) }}
+
+
+
+
+
+	{% endblock %}
