@@ -10,6 +10,8 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('article', './assets/article.js')
     .addEntry('article_list', './assets/article_list.js')
+    .enableSassLoader()
+    .addStyleEntry('styles', './assets/styles/app.scss')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .cleanupOutputBeforeBuild()
