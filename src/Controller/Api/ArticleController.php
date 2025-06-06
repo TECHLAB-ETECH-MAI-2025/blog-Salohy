@@ -172,5 +172,48 @@ class ArticleController extends AbstractController
             'likesCount' => $article->getLikes()->count()
         ]);
     }
-	
+    #[Route('/{id}/rate', name: 'app_article_rate', methods: ['POST'])]
+    public function rate(Request $request, Article $article, EntityManagerInterface $em): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return $this->json(['message' => 'Invalid request'], 400);
+        }
+
+        $ip = $request->getClientIp();
+        $ratingValue = (int) $request->request->get('rating');
+
+        if ($ratingValue < 1 || $ratingValue > 5) {
+            return $this->json(['message' => 'Invalid rating'], 400);
+        }
+
+        $existing = $em->getRepository(ArticleRating::class)->findOneBy([
+            'article' => $article,
+            'ipAddress' => $ip,
+        ]);
+
+        if (!$existing) {
+            $rating = new ArticleRating();
+            $rating->setArticle($article);
+            $rating->setIpAddress($ip);
+            $rating->setRating($ratingValue);
+            $rating->setCreatedAt(new \DateTimeImmutable());
+            $em->persist($rating);
+            $em->flush();
+            $message = "Thank you for rating!";
+        } else {
+            $message = "You have already rated.";
+        }
+
+        $ratings = $article->getRatings();
+        $average = $ratings->count() > 0 ? round(array_sum(array_map(fn($r) => $r->getRating(), $ratings->toArray())) / count($ratings), 1) : null;
+
+        return $this->json([
+            'message' => $message,
+            'average' => $average,
+        ]);
+    }
+
 }
+
+	
+

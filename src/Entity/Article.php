@@ -206,6 +206,15 @@ class Article
     {
         return $this->ratings;
     }
+    public function getAverageRating(): ?float
+    {
+        $count = count($this->ratings);
+        if ($count === 0) return null;
+
+        $sum = array_reduce($this->ratings->toArray(), fn($carry, $r) => $carry + $r->getRating(), 0);
+        return $sum / $count;
+    }
+
 
     public function addRating(ArticleRating $rating): static
     {

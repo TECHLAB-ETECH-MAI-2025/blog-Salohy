@@ -3,6 +3,10 @@
   "build/article.js": "/build/article.js",
   "build/article_list.js": "/build/article_list.js",
   "build/runtime.js": "/build/runtime.js",
-  "build/vendors-node_modules_jquery_dist_jquery_js.js": "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-  "build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js.js": "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js.js"
+  "build/vendors-node_modules_core-js_internals_array-iteration_js-node_modules_core-js_internals_arra-55ee79.js": "/build/vendors-node_modules_core-js_internals_array-iteration_js-node_modules_core-js_internals_arra-55ee79.js",
+  "build/vendors-node_modules_jquery_dist_jquery_js-node_modules_core-js_internals_object-create_js-no-4cf300.js": "/build/vendors-node_modules_jquery_dist_jquery_js-node_modules_core-js_internals_object-create_js-no-4cf300.js",
+  "build/vendors-node_modules_datatables_net-bs5_css_dataTables_bootstrap5_min_css-node_modules_datata-10a5c4.css": "/build/vendors-node_modules_datatables_net-bs5_css_dataTables_bootstrap5_min_css-node_modules_datata-10a5c4.css",
+  "build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-88fc80.js": "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-88fc80.js",
+  "build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-45e052.js": "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-45e052.js",
+  "build/assets_styles_app_scss.css": "/build/assets_styles_app_scss.css"
 }

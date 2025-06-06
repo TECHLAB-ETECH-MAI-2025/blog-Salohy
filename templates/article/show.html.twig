@@ -15,6 +15,36 @@
                 {% endfor %}
             </div>
         {% endif %}
+        {# SYSTÈME DE NOTATION DES ARTICLES #}
+        <div class="mb-4">
+            <strong>Rate this article:</strong>
+            <div id="rating-stars" class="mt-2" data-article-id="{{ article.id }}" style="font-size: 1.5rem; color: #FCA311; cursor: pointer;">
+                {% set average = article.averageRating ?? 0 %}
+                {% for i in 1..5 %}
+                    <i class="fa-star {% if i <= average|round(0, 'floor') %}fas{% else %}far{% endif %}" data-value="{{ i }}"></i>
+                {% endfor %}
+                <span class="ms-2 text-muted">({{ average|number_format(1) }}/5)</span>
+            </div>
+        </div>
+
+        {# PARTAGE RESEAUX SOCIAUX #}
+        <div class="mb-4">
+            <strong>Share this article:</strong>
+            <div class="d-flex gap-2 mt-2 flex-wrap">
+                <a class="btn btn-outline-custom btn-sm" target="_blank"
+                   href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('app_article_show', {id: article.id})) }}">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+                <a class="btn btn-outline-custom btn-sm" target="_blank"
+                   href="https://twitter.com/intent/tweet?url={{ absolute_url(path('app_article_show', {id: article.id})) }}&text={{ article.title|url_encode }}">
+                    <i class="fab fa-twitter"></i> Twitter
+                </a>
+                <a class="btn btn-outline-custom btn-sm" target="_blank"
+                   href="https://www.linkedin.com/sharing/share-offsite/?url={{ absolute_url(path('app_article_show', {id: article.id})) }}">
+                    <i class="fab fa-linkedin-in"></i> LinkedIn
+                </a>
+            </div>
+        </div>
 
         <hr>
 
@@ -31,7 +61,7 @@
             </ul>
 
             <div class="d-flex justify-content-center">
-                {{ knp_pagination_render(pagination) }} <!-- Affichage des liens de pagination -->
+                {{ knp_pagination_render(pagination) }}
             </div>
         {% else %}
             <p class="text-muted">No comments yet!</p>

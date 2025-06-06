@@ -79,3 +79,22 @@ $(document).ready(function () {
         }
     });
 });
+// Système de notation
+$(document).on('click', '.rating-star', function () {
+    const articleId = $(this).data('article-id');
+    const rating = $(this).data('rating');
+
+    $.ajax({
+        url: `/article/${articleId}/rate`,
+        method: 'POST',
+        data: { rating: rating },
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        success: function (data) {
+            $('.rating-message').text(data.message).fadeIn().delay(1500).fadeOut();
+            if (data.average) {
+                $('.average-rating').text(`Average: ${data.average}/5`);
+            }
+        }
+    });
+});
+
