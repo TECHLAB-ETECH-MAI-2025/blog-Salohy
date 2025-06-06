@@ -43,12 +43,19 @@ class Article
     #[ORM\OneToMany(targetEntity: ArticleLike::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, ArticleRating>
+     */
+    #[ORM\OneToMany(targetEntity: ArticleRating::class, mappedBy: 'article')]
+    private Collection $ratings;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->createAt = new \DateTime();
         $this->likes = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,5 +191,35 @@ class Article
     }
     return false;
 }
+
+    /**
+     * @return Collection<int, ArticleRating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(ArticleRating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(ArticleRating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getArticle() === $this) {
+                $rating->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
 
 }
