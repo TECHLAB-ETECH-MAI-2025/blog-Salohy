@@ -15,16 +15,19 @@
                 {% endfor %}
             </div>
         {% endif %}
+        
         {# SYSTÈME DE NOTATION DES ARTICLES #}
         <div class="mb-4">
             <strong>Rate this article:</strong>
             <div id="rating-stars" class="mt-2" data-article-id="{{ article.id }}" style="font-size: 1.5rem; color: #FCA311; cursor: pointer;">
                 {% set average = article.averageRating ?? 0 %}
                 {% for i in 1..5 %}
-                    <i class="fa-star {% if i <= average|round(0, 'floor') %}fas{% else %}far{% endif %}" data-value="{{ i }}"></i>
+                    <i class="fa-star rating-star {% if i <= average|round(0, 'floor') %}fas{% else %}far{% endif %}" data-rating="{{ i }}"></i>
                 {% endfor %}
-                <span class="ms-2 text-muted">({{ average|number_format(1) }}/5)</span>
+                <span class="average-rating ms-2 text-muted">({{ average|number_format(1) }}/5)</span>
+                <div class="rating-message text-success mt-1" style="display: none;"></div>
             </div>
+
         </div>
 
         {# PARTAGE RESEAUX SOCIAUX #}
@@ -85,3 +88,7 @@
         {{ form_end(commentForm) }}
     </div>
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+

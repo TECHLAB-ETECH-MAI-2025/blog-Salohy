@@ -25,33 +25,18 @@ class Article
     #[ORM\Column]
     private ?\DateTime $createAt = null;
 
-    /**
-     * @var Collection<int, Category>
-     */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
     private Collection $categories;
 
-    /**
-     * @var Collection<int, Comment>
-     */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article')]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, cascade: ['persist', 'remove'])]
     private Collection $comments;
 
-    /**
-     * @var Collection<int, ArticleLike>
-     */
-    #[ORM\OneToMany(targetEntity: ArticleLike::class, mappedBy: 'article', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleLike::class, orphanRemoval: true)]
     private Collection $likes;
 
-    /**
-     * @var Collection<int, ArticleRating>
-     */
-    #[ORM\OneToMany(targetEntity: ArticleRating::class, mappedBy: 'article')]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleRating::class, cascade: ['persist', 'remove'])]
     private Collection $ratings;
 
-    /**
-     * @var Collection<int, Tag>
-     */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'articles')]
     private Collection $tags;
 
@@ -78,7 +63,6 @@ class Article
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -90,7 +74,6 @@ class Article
     public function setContent(string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -102,13 +85,9 @@ class Article
     public function setCreateAt(\DateTime $createAt): static
     {
         $this->createAt = $createAt;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Category>
-     */
     public function getCategories(): Collection
     {
         return $this->categories;
@@ -119,20 +98,15 @@ class Article
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
         }
-
         return $this;
     }
 
     public function removeCategory(Category $category): static
     {
         $this->categories->removeElement($category);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
     public function getComments(): Collection
     {
         return $this->comments;
@@ -144,25 +118,19 @@ class Article
             $this->comments->add($comment);
             $comment->setArticle($this);
         }
-
         return $this;
     }
 
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getArticle() === $this) {
                 $comment->setArticle(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, ArticleLike>
-     */
     public function getLikes(): Collection
     {
         return $this->likes;
@@ -174,47 +142,33 @@ class Article
             $this->likes->add($like);
             $like->setArticle($this);
         }
-
         return $this;
     }
 
     public function removeLike(ArticleLike $like): static
     {
         if ($this->likes->removeElement($like)) {
-            // set the owning side to null (unless already changed)
             if ($like->getArticle() === $this) {
                 $like->setArticle(null);
             }
         }
-
         return $this;
     }
-    public function isLikedByIp(?string $ip): bool
-{
-    foreach ($this->getLikes() as $like) {
-        if ($like->getIpAddress() === $ip) {
-            return true;
-        }
-    }
-    return false;
-}
 
-    /**
-     * @return Collection<int, ArticleRating>
-     */
+    public function isLikedByIp(?string $ip): bool
+    {
+        foreach ($this->getLikes() as $like) {
+            if ($like->getIpAddress() === $ip) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getRatings(): Collection
     {
         return $this->ratings;
     }
-    public function getAverageRating(): ?float
-    {
-        $count = count($this->ratings);
-        if ($count === 0) return null;
-
-        $sum = array_reduce($this->ratings->toArray(), fn($carry, $r) => $carry + $r->getRating(), 0);
-        return $sum / $count;
-    }
-
 
     public function addRating(ArticleRating $rating): static
     {
@@ -222,25 +176,38 @@ class Article
             $this->ratings->add($rating);
             $rating->setArticle($this);
         }
-
         return $this;
     }
 
     public function removeRating(ArticleRating $rating): static
     {
         if ($this->ratings->removeElement($rating)) {
-            // set the owning side to null (unless already changed)
             if ($rating->getArticle() === $this) {
                 $rating->setArticle(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
+    public function calculateAverageRating(): float
+    {
+        if ($this->ratings->isEmpty()) {
+            return 0.0;
+        }
+
+        $total = 0;
+        foreach ($this->ratings as $rating) {
+            $total += $rating->getRating();
+        }
+
+        return round($total / count($this->ratings), 1);
+    }
+
+    public function getAverageRating(): float
+    {
+        return $this->calculateAverageRating();
+    }
+
     public function getTags(): Collection
     {
         return $this->tags;
@@ -252,7 +219,6 @@ class Article
             $this->tags->add($tag);
             $tag->addArticle($this);
         }
-
         return $this;
     }
 
@@ -261,8 +227,6 @@ class Article
         if ($this->tags->removeElement($tag)) {
             $tag->removeArticle($this);
         }
-
         return $this;
     }
-
 }
