@@ -1,78 +1,102 @@
 {% extends 'base.html.twig' %}
 
-	{% block title %}Modifier mon profil{% endblock %}
+{% block title %}Edit My Profile{% endblock %}
 
-	{% block body %}
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar Menu -->
+        <div class="col-md-3 mb-4">
+            <div class="list-group shadow-sm sidebar-menu">
+                <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action">
+                    My profile
+                </a>
+                <a href="{{ path('app_profile_edit') }}" class="list-group-item list-group-item-action active">
+                    Edit my profile
+                </a>
+                <a href="{{ path('app_profile_change_password') }}" class="list-group-item list-group-item-action">
+                    Change my password
+                </a>
+                <form action="{{ path('app_logout') }}" method="post">
+                    <button type="submit" class="list-group-item list-group-item-action text-start">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
 
+        <!-- Form Content -->
+        <div class="col-md-9">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-4">Edit My Profile</h3>
 
+                    {{ form_start(profileForm) }}
 
+                    <div class="mb-3">
+                        {{ form_label(profileForm.firstName) }}
+                        {{ form_widget(profileForm.firstName, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(profileForm.firstName) }}
+                    </div>
 
-					Menu
+                    <div class="mb-3">
+                        {{ form_label(profileForm.lastName) }}
+                        {{ form_widget(profileForm.lastName, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(profileForm.lastName) }}
+                    </div>
 
+                    <div class="mb-3">
+                        {{ form_label(profileForm.email) }}
+                        {{ form_widget(profileForm.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(profileForm.email) }}
+                    </div>
 
+                    <button type="submit" class="btn btn-outline-custom">Save Changes</button>
 
+                    {{ form_end(profileForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-							 Mon profil
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sidebar-menu .list-group-item {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
+        .sidebar-menu .list-group-item:hover,
+        .sidebar-menu .list-group-item.active {
+            background-color: #FCA311;
+            color: #fff;
+        }
 
-							 Modifier mon profil
+        .sidebar-menu form button.list-group-item {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
 
-
-							 Changer mon mot de passe
-
-
-							 Déconnexion
-
-
-
-
-
-
-			{% for label, messages in app.flashes %}
-				{% for message in messages %}
-
-						{{ message }}
-                      {% endfor %}
-			{% endfor %}
-
-
-
-					Modifier mon profil
-
-
-					{{ form_start(profileForm) }}
-
-
-								{{ form_label(profileForm.firstName) }}
-								{{ form_widget(profileForm.firstName) }}
-
-									{{ form_errors(profileForm.firstName) }}
-
-
-
-								{{ form_label(profileForm.lastName) }}
-								{{ form_widget(profileForm.lastName) }}
-
-									{{ form_errors(profileForm.lastName) }}
-
-
-
-
-							{{ form_label(profileForm.email) }}
-							{{ form_widget(profileForm.email) }}
-
-								{{ form_errors(profileForm.email) }}
-
-
-
-
-							Enregistrer les modifications
-
-					{{ form_end(profileForm) }}
-
-
-
-
-
-	{% endblock %}
+        .sidebar-menu form button.list-group-item:hover {
+            background-color: #FCA311;
+            color: #fff;
+        }
+    </style>
+{% endblock %}

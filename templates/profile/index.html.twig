@@ -1,133 +1,117 @@
 {% extends 'base.html.twig' %}
 
-	{% block title %}Mon profil{% endblock %}
-
-	{% block body %}
-
-
-
-
-
-					Menu
-
-
-
-
-							 Mon profil
-
-
-							 Modifier mon profil
-
-
-							 Changer mon mot de passe
-
-
-							 Déconnexion
-
-
-
-
-
-
-			{% for label, messages in app.flashes %}
-				{% for message in messages %}
-
-						{{ message }}
-
-
-				{% endfor %}
-			{% endfor %}
-
-
-
-					Mon profil
-
-
-
-
-							{{ app.user.firstName|slice(0, 1)|upper }}{{ app.user.lastName|slice(0, 1)|upper }}
-
-						{{ app.user.fullName }}
-						{{ app.user.email }}
-
-						{% if app.user.isVerified %}
-							Email vérifié
-						{% else %}
-							Email non vérifié
-						{% endif %}
-
-
-
-
-							Informations personnelles
-
-
-									Prénom
-									{{ app.user.firstName|default('Non renseigné') }}
-
-
-									Nom
-									{{ app.user.lastName|default('Non renseigné') }}
-
-
-									Email
-									{{ app.user.email }}
-
-
-
-
-							Informations du compte
-
-
-									Date d'inscription
-									{{ app.user.createdAt|date('d/m/Y') }}
-
-
-									Rôle
-
-										{% if 'ROLE_ADMIN' in app.user.roles %}
-											Administrateur
-										{% else %}
-											Utilisateur
-										{% endif %}
-
-
-
-									Statut
-
-										{% if app.user.isVerified %}
-											Email vérifié
-										{% else %}
-											Email non vérifié
-										{% endif %}
-
-Modifier mon profil
-
-
-
-
-
-
-	{% endblock %}
-
-	{% block stylesheets %}
-	{{ parent() }}
-
-	.avatar-placeholder {
-		width: 100px;
-		height: 100px;
-		background-color: #4361ee;
-		color: white;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin: 0 auto;
-	}
-
-	{% endblock %}
-
-
-
-
-
+{% block title %}My profile{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="list-group shadow-sm sidebar-menu">
+                <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action active">My profile</a>
+                <a href="{{ path('app_profile_edit') }}" class="list-group-item list-group-item-action">Edit my profile</a>
+                <a href="{{ path('app_profile_change_password') }}" class="list-group-item list-group-item-action">Change my password</a>
+                <form action="{{ path('app_logout') }}" method="post">
+                    <button type="submit" class="list-group-item list-group-item-action text-start">Logout</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-md-9">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-placeholder mb-2">
+                            {{ app.user.firstName|slice(0, 1)|upper }}{{ app.user.lastName|slice(0, 1)|upper }}
+                        </div>
+                        <h4 class="mb-1">{{ app.user.fullName }}</h4>
+                        <p class="text-muted mb-1">{{ app.user.email }}</p>
+                        <span class="badge bg-{{ app.user.isVerified ? 'success' : 'warning' }}">
+                            {{ app.user.isVerified ? 'Email check' : 'Email not check' }}
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-secondary">About me</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Firstname:</strong> {{ app.user.firstName|default('Not specified') }}</li>
+                                <li class="list-group-item"><strong>Name:</strong> {{ app.user.lastName|default('Not specified') }}</li>
+                                <li class="list-group-item"><strong>Email:</strong> {{ app.user.email }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-secondary">Account Information</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Registered on:</strong> {{ app.user.createdAt|date('d/m/Y') }}</li>
+                                <li class="list-group-item"><strong>Role:</strong> {{ 'ROLE_ADMIN' in app.user.roles ? 'Administrator' : 'User' }}</li>
+                                <li class="list-group-item"><strong>Status:</strong> {{ app.user.isVerified ? 'Email check' : 'Email not check' }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ path('app_profile_edit') }}" class="btn btn-outline-custom">Edit my profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        background-color: #415A77;
+        color: white;
+        border-radius: 50%;
+        font-size: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
+
+    .sidebar-menu .list-group-item {
+        background-color: #fff;
+        color: #000;
+        border: none;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar-menu .list-group-item:hover,
+    .sidebar-menu .list-group-item.active {
+        background-color: #FCA311;
+        color: #fff;
+    }
+
+    .sidebar-menu form button.list-group-item {
+        background-color: #fff;
+        color: #000;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+
+    .sidebar-menu form button.list-group-item:hover {
+        background-color: #FCA311;
+        color: #fff;
+    }
+</style>
+{% endblock %}
