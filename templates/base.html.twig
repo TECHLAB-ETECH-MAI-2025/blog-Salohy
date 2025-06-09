@@ -103,6 +103,13 @@
         a.text-decoration-none:hover {
             text-decoration: underline;
         }
+
+        .dropdown-menu .dropdown-item:hover,
+        .dropdown-menu .dropdown-item:focus,
+        .dropdown-menu .dropdown-item:active {
+            background-color: #FCA311;
+            color: white;
+         }
     </style>
     {% endblock %}
 </head>
@@ -161,6 +168,14 @@
                 </div>
             </div>
         </nav>
+        {% if app.user %}
+            <div class="ms-3 mt-2">
+                <a href="{{ path('chat_user_list') }}" class="btn btn-outline-custom btn-sm">
+                    💬 Chat
+                </a>
+            </div>
+        {% endif %}
+
     {% endif %}
 
     <main class="{% if app.request.attributes.get('_route') in authRoutes %}auth-container d-flex align-items-center justify-content-center{% else %}container py-4{% endif %}">

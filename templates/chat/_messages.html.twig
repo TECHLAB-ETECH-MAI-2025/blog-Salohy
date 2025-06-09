@@ -1,0 +1,9 @@
+{% for message in messages %}
+    <div class="mb-2">
+        <strong class="{{ message.sender.id == app.user.id ? 'text-primary' : 'text-secondary' }}">
+            {{ message.sender.fullName|default(message.sender.email) }}
+        </strong>:
+        {{ message.content }}
+        <small class="text-muted">({{ message.createdAt|date('H:i') }})</small>
+    </div>
+{% endfor %}
