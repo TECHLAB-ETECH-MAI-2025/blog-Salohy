@@ -17,23 +17,56 @@ use Symfony\Component\Routing\Annotation\Route;
 class ChatController extends AbstractController
 {
     #[Route('', name: 'chat_user_list')]
-    public function list(EntityManagerInterface $entityManager): Response
+    public function list(Request $request, MessageRepository $messageRepository, EntityManagerInterface $em): Response
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
-        $users = $entityManager->getRepository(User::class)->createQueryBuilder('u')
-            ->where('u != :current')
-            ->setParameter('current', $currentUser)
+        $search = $request->query->get('q');
+
+        // Récupère les utilisateurs avec lesquels il y a eu une discussion
+        $messages = $messageRepository->createQueryBuilder('m')
+            ->where('m.sender = :user OR m.receiver = :user')
+            ->setParameter('user', $currentUser)
             ->getQuery()
             ->getResult();
 
+        $conversationUsers = [];
+
+        foreach ($messages as $message) {
+            $otherUser = $message->getSender() === $currentUser
+                ? $message->getReceiver()
+                : $message->getSender();
+
+            if (!in_array($otherUser, $conversationUsers, true)) {
+                $conversationUsers[] = $otherUser;
+            }
+        }
+
+        // Si recherche, on propose d'autres utilisateurs (hors currentUser)
+        if ($search) {
+            $userRepo = $em->getRepository(User::class);
+            $queryBuilder = $userRepo->createQueryBuilder('u')
+            ->where('u != :current')
+            ->andWhere('u.email LIKE :q OR u.firstName LIKE :q OR u.lastName LIKE :q')
+            ->setParameter('current', $currentUser)
+            ->setParameter('q', '%' . $search . '%');
+
+
+            $searchResults = $queryBuilder->getQuery()->getResult();
+        } else {
+            $searchResults = [];
+        }
+
         return $this->render('chat/user_list.html.twig', [
-            'users' => $users,
+            'users' => $conversationUsers,
+            'search_results' => $searchResults,
+            'search' => $search,
         ]);
     }
+
 
     #[Route('/{receiverId}', name: 'chat_index')]
     public function index(
