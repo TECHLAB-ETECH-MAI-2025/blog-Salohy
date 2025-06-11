@@ -189,7 +189,7 @@ class ArticleController extends AbstractController
         $em->persist($rating);
         $em->flush();
 
-        $average = $article->calculateAverageRating(); // crée cette méthode dans l'entité si nécessaire
+        $average = $article->calculateAverageRating(); 
 
         return new JsonResponse([
             'message' => 'Merci pour votre note !',

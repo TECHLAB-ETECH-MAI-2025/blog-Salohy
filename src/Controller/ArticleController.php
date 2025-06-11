@@ -13,26 +13,37 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
-#[Route('/article')]
-final class ArticleController extends AbstractController
+#[Route('/articles')]
+class ArticleController extends AbstractController
 {
-    #[Route(name: 'app_article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository, PaginatorInterface $paginator, Request $request): Response
-{
-    $pagination = $paginator->paginate(
-        $articleRepository->findBy([], ['createAt' => 'DESC']),
-        $request->query->getInt('page', 1),
-        6
-    );
+    #[Route('', name: 'app_article_index')]
+    public function index(Request $request, ArticleRepository $articleRepository, PaginatorInterface $paginator): Response
+    {
+        $query = $request->query->get('q');
 
-    return $this->render('article/index.html.twig', [
-        'articles' => $pagination,
-    ]);
-}
+        $qb = $articleRepository->createQueryBuilder('a')
+            ->leftJoin('a.categories', 'c')
+            ->addSelect('c');
 
+        if ($query) {
+            $qb->where('a.title LIKE :search')
+               ->setParameter('search', '%' . $query . '%');
+        }
+
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            6
+        );
+
+        return $this->render('article/index.html.twig', [
+            'articles' => $pagination,
+            'search' => $query,
+        ]);
+    }
 
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -46,7 +57,7 @@ final class ArticleController extends AbstractController
             $entityManager->persist($article);
             $entityManager->flush();
 
-            $this->addFlash('success', 'The article is create succesfully');
+            $this->addFlash('success', 'The article was created successfully');
             return $this->redirectToRoute('app_article_index');
         }
 
@@ -66,7 +77,6 @@ final class ArticleController extends AbstractController
         $form = $this->createForm(CommentForm::class, $comment);
         $form->handleRequest($request);
 
-        // Détection si l’article est liké
         $ipAddress = $request->getClientIp();
         $isLiked = $likeRepository->findOneBy([
             'article' => $article,
@@ -74,11 +84,10 @@ final class ArticleController extends AbstractController
         ]) !== null;
 
         $pagination = $paginator->paginate(
-        $article->getComments(),
-        $request->query->getInt('page', 1), 
-        6
+            $article->getComments(),
+            $request->query->getInt('page', 1), 
+            6
         );
-
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($comment);
@@ -98,14 +107,16 @@ final class ArticleController extends AbstractController
     #[Route('/{id}/like', name: 'app_article_like', methods: ['POST'])]
     public function like(Request $request, Article $article, EntityManagerInterface $em, ArticleLikeRepository $likeRepo): Response
     {
-        if (!$request->isXmlHttpRequest()) {
-            return $this->redirectToRoute('app_article_index');
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->json(['success' => false, 'message' => 'Not authenticated'], 403);
         }
 
-        $ip = $request->getClientIp();
+        /** @var User $user */
+        $user = $this->getUser();
+
         $existingLike = $likeRepo->findOneBy([
             'article' => $article,
-            'ipAddress' => $ip
+            'user' => $user
         ]);
 
         $liked = false;
@@ -115,7 +126,7 @@ final class ArticleController extends AbstractController
         } else {
             $like = new ArticleLike();
             $like->setArticle($article);
-            $like->setIpAddress($ip);
+            $like->setUser($user);
             $like->setCreatedAt(new \DateTimeImmutable());
             $em->persist($like);
             $liked = true;
@@ -129,6 +140,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
+
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
@@ -137,7 +149,7 @@ final class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'The article is update successfully');
+            $this->addFlash('success', 'The article was updated successfully');
             return $this->redirectToRoute('app_article_index');
         }
 
@@ -153,12 +165,9 @@ final class ArticleController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
             $entityManager->remove($article);
             $entityManager->flush();
-            $this->addFlash('success', 'The article is delete successfully');
+            $this->addFlash('success', 'The article was deleted successfully');
         }
 
         return $this->redirectToRoute('app_article_index');
     }
-    
 }
-
-    

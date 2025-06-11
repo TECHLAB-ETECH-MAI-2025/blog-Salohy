@@ -31,7 +31,7 @@ class Article
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, cascade: ['persist', 'remove'])]
     private Collection $comments;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleLike::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleLike::class, cascade: ['remove'])]
     private Collection $likes;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleRating::class, cascade: ['persist', 'remove'])]
@@ -44,21 +44,15 @@ class Article
     {
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->createAt = new \DateTime();
         $this->likes = new ArrayCollection();
         $this->ratings = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->createAt = new \DateTime();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
+    public function getTitle(): ?string { return $this->title; }
 
     public function setTitle(string $title): static
     {
@@ -66,10 +60,7 @@ class Article
         return $this;
     }
 
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
+    public function getContent(): ?string { return $this->content; }
 
     public function setContent(string $content): static
     {
@@ -77,10 +68,7 @@ class Article
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTime
-    {
-        return $this->createAt;
-    }
+    public function getCreateAt(): ?\DateTime { return $this->createAt; }
 
     public function setCreateAt(\DateTime $createAt): static
     {
@@ -88,10 +76,7 @@ class Article
         return $this;
     }
 
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
+    public function getCategories(): Collection { return $this->categories; }
 
     public function addCategory(Category $category): static
     {
@@ -107,10 +92,7 @@ class Article
         return $this;
     }
 
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
+    public function getComments(): Collection { return $this->comments; }
 
     public function addComment(Comment $comment): static
     {
@@ -131,10 +113,7 @@ class Article
         return $this;
     }
 
-    public function getLikes(): Collection
-    {
-        return $this->likes;
-    }
+    public function getLikes(): Collection { return $this->likes; }
 
     public function addLike(ArticleLike $like): static
     {
@@ -155,20 +134,17 @@ class Article
         return $this;
     }
 
-    public function isLikedByIp(?string $ip): bool
+    public function isLikedByUser(?User $user): bool
     {
-        foreach ($this->getLikes() as $like) {
-            if ($like->getIpAddress() === $ip) {
+        foreach ($this->likes as $like) {
+            if ($like->getUser() === $user) {
                 return true;
             }
         }
         return false;
     }
 
-    public function getRatings(): Collection
-    {
-        return $this->ratings;
-    }
+    public function getRatings(): Collection { return $this->ratings; }
 
     public function addRating(ArticleRating $rating): static
     {
@@ -208,10 +184,7 @@ class Article
         return $this->calculateAverageRating();
     }
 
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
+    public function getTags(): Collection { return $this->tags; }
 
     public function addTag(Tag $tag): static
     {
