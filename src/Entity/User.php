@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?bool $isVerified = null;
+    private ?bool $isVerified = false;
 
     #[ORM\OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
     private Collection $sentMessages;

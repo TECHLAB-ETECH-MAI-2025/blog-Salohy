@@ -165,6 +165,11 @@
                                 <a class="nav-link text-white {% if app.request.attributes.get('_route') == 'app_register' %}active{% endif %}" href="{{ path('app_register') }}">Register</a>
                             </li>
                         {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_admin' %}active{% endif %}" href="{{ path('app_admin_dashboard') }}">Admin</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -184,6 +189,16 @@
             {% block body %}{% endblock %}
         </div>
     </main>
+
+    {% set hideBackButtonRoutes = ['app_home'] %}
+    {% if app.request.attributes.get('_route') not in hideBackButtonRoutes %}
+        <div class="position-fixed bottom-0 start-0 m-3">
+            <a href="{{ app.request.headers.get('referer') ?? path('app_home') }}" class="btn btn-outline-secondary btn-sm shadow">
+                ⬅ Retour
+            </a>
+        </div>
+    {% endif %}
+
 
     <!-- Scripts -->
     {% block javascripts %}

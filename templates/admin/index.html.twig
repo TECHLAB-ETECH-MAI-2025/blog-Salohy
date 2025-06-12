@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Tableau de bord d'administration</h2>
+
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 mb-4">
+                    <h5>Utilisateurs</h5>
+                    <p class="fs-3">{{ userCount }}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 mb-4">
+                    <h5>Utilisateurs vérifiés</h5>
+                    <p class="fs-3">{{ verifiedCount }}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 mb-4">
+                    <h5>Administrateurs</h5>
+                    <p class="fs-3">{{ adminCount }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-end mt-3">
+            <a href="{{ path('app_admin_users') }}" class="btn btn-outline-custom">Gérer les utilisateurs</a>
+        </div>
+    </div>
+{% endblock %}
