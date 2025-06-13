@@ -25,7 +25,7 @@ class RegistrationForm extends AbstractType
                 'label' => 'Email',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'exemple@domaine.com'
+                    'placeholder' => 'exemple@gmail.com'
                 ],
                 'constraints' => [
                     new NotBlank([
@@ -50,6 +50,16 @@ class RegistrationForm extends AbstractType
                 'label_attr' => [
                     'class' => 'form-check-label'
                 ]
+            ])
+            ->add('firstName', TextType::class, [
+                'label' => 'First Name',
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Your first name'],
+                'constraints' => [new NotBlank(['message' => 'Please enter your first name'])]
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => 'Last Name',
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Your last name'],
+                'constraints' => [new NotBlank(['message' => 'Please enter your last name'])]
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,

@@ -10,17 +10,29 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/comment')]
 final class CommentController extends AbstractController
 {
-    #[Route(name: 'app_comment_index', methods: ['GET'])]
-    public function index(CommentRepository $commentRepository): Response
+   #[Route(name: 'app_comment_index', methods: ['GET'])]
+    public function index(CommentRepository $commentRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        $query = $commentRepository->createQueryBuilder('c')
+            ->leftJoin('c.article', 'a') // optionnel, si tu veux les articles liés
+            ->addSelect('a');
+
+        $pagination = $paginator->paginate(
+            $query,                         // QueryBuilder
+            $request->query->getInt('page', 1),
+            10
+        );
+
         return $this->render('comment/index.html.twig', [
-            'comments' => $commentRepository->findAll(),
+            'comments' => $pagination
         ]);
     }
+
 
     #[Route('/new', name: 'app_comment_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -40,6 +52,7 @@ final class CommentController extends AbstractController
             'comment' => $comment,
             'form' => $form,
         ]);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 
     #[Route('/{id}', name: 'app_comment_show', methods: ['GET'])]
@@ -77,5 +90,6 @@ final class CommentController extends AbstractController
         }
 
         return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 }

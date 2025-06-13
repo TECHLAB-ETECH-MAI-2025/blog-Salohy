@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block title %}Manage Users{% endblock %}
+
+{% block body %}
+<h2 class="mb-4">Manage Users</h2>
+
+<a href="{{ path('app_admin_users_new') }}" class="btn btn-primary mb-3">Create user</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Check</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.fullName|default(user.email) }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
+                <td>{{ user.isVerified ? '✔️' : '❌' }}</td>
+                <td>
+                    <a href="{{ path('app_admin_users_edit', { id: user.id }) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+
+                    <form method="post" action="{{ path('app_admin_users_delete', { id: user.id }) }}" style="display: inline;" onsubmit="return confirm('Confirm delete ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No user found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

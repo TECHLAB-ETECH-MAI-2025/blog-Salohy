@@ -10,7 +10,7 @@
         }
 
         .btn-register {
-            background-color:rgb(245, 151, 12);
+            background-color: rgb(245, 151, 12);
             border: none;
         }
 
@@ -39,6 +39,12 @@
         {% endfor %}
 
         {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.firstName, {
+                label: 'First Name'
+            }) }}
+            {{ form_row(registrationForm.lastName, {
+                label: 'Last Name'
+            }) }}
             {{ form_row(registrationForm.email, {
                 label: 'Email Address'
             }) }}

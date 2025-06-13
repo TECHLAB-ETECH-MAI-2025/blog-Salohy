@@ -2,36 +2,76 @@
 
 {% block title %}List of comments{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
+<div class="container mt-4">
     <h1 class="text-center mb-4">List of comments</h1>
 
-    <div class="text-end mb-4">
+    <div class="text-end mb-3">
         <a href="{{ path('app_comment_new') }}" class="btn btn-outline-custom">Add a comment</a>
     </div>
 
-    {% if comments is empty %}
-        <p class="text-center text-muted">No comment yet!</p>
-    {% else %}
-        <div class="row g-4">
+    <table id="commentsTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Content</th>
+                <th>Article</th>
+                <th>Posted At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for comment in comments %}
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ comment.author }}</h5>
-                            <p class="card-text">{{ comment.content }}</p>
-                            <p class="card-text mt-auto">
-                                <small class="text-muted">Posted on {{ comment.createdAt ? comment.createdAt|date('d/m/Y H:i') : '' }}</small>
-                            </p>
-                            <div class="mt-3">
-                                <a href="{{ path('app_comment_show', {'id': comment.id}) }}" class="btn btn-sm btn-outline-custom me-2">Read</a>
-                                <a href="{{ path('app_comment_edit', {'id': comment.id}) }}" class="btn btn-sm btn-outline-secondary">Update</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <tr>
+                    <td>{{ comment.author }}</td>
+                    <td>
+                        {% if comment.content|length > 80 %}
+                            {{ comment.content|slice(0, 80) ~ '...' }}
+                        {% else %}
+                            {{ comment.content }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if comment.article %}
+                            <a href="{{ path('app_article_show', { id: comment.article.id }) }}">
+                                {{ comment.article.title }}
+                            </a>
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.createdAt ? comment.createdAt|date('d/m/Y H:i') : '' }}</td>
+                    <td>
+                        <a href="{{ path('app_comment_show', {'id': comment.id}) }}" class="btn btn-sm btn-outline-custom me-2">Read</a>
+                        <a href="{{ path('app_comment_edit', {'id': comment.id}) }}" class="btn btn-sm btn-outline-secondary">Update</a>
+                    </td>
+                </tr>
             {% endfor %}
-        </div>
-    {% endif %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(comments) }}
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new DataTable('#commentsTable', {
+                paging: false,
+                info: false,
+                searching: false,
+            });
+        });
+    </script>
 {% endblock %}

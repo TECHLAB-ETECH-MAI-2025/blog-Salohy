@@ -1,68 +1,48 @@
 import $ from 'jquery';
 
 $(document).ready(function () {
-    const $searchInput = $('#search-article');
-    const $searchResults = $('#search-results');
-    let searchTimeout;
+    const $searchInput = $('input[name="q"]');
+    const $searchResults = $('<div class="dropdown-menu show" style="position:absolute;top:100%;left:0;width:100%;z-index:1050;"></div>').insertAfter($searchInput).hide();
+    let timeout;
 
     $searchInput.on('input', function () {
+        clearTimeout(timeout);
         const query = $(this).val().trim();
-        clearTimeout(searchTimeout);
 
         if (query.length < 2) {
-            $searchResults.removeClass('show').empty();
+            $searchResults.hide();
             return;
         }
 
-        searchTimeout = setTimeout(() => {
-            $.get('/api/search', { q: query }, function (response) {
+        timeout = setTimeout(() => {
+            $.get('/api/search', { q: query }, function (data) {
                 let html = '';
 
-                if (response.articles.length > 0) {
+                if (data.articles.length > 0) {
                     html += '<h6 class="dropdown-header">Articles</h6>';
-                    response.articles.forEach(article => {
-                        html += `
-                            <div class="dropdown-item search-item" data-type="article" data-id="${article.id}">
-                                <strong>${article.title}</strong><br>
-                                <small>${article.categories.join(', ')}</small>
-                            </div>`;
+                    data.articles.forEach(article => {
+                        html += `<a class="dropdown-item" href="/articles/${article.id}">${article.title}</a>`;
                     });
                 }
 
-                if (response.categories.length > 0) {
-                    html += '<h6 class="dropdown-header mt-2">Categories</h6>';
-                    response.categories.forEach(cat => {
-                        html += `
-                            <div class="dropdown-item search-item" data-type="category" data-id="${cat.id}">
-                                <strong>${cat.title}</strong><br>
-                                <small>${cat.description}</small>
-                            </div>`;
+                if (data.categories.length > 0) {
+                    html += '<h6 class="dropdown-header">Categories</h6>';
+                    data.categories.forEach(cat => {
+                        html += `<a class="dropdown-item" href="/category/${cat.id}">${cat.title}</a>`;
                     });
                 }
 
-                if (!html) {
-                    html = '<div class="dropdown-item text-muted">Aucun résultat trouvé</div>';
-                }
-
-                $searchResults.html(html).addClass('show').css('display', 'block');
+                $searchResults.html(html).show();
             });
         }, 300);
     });
 
-    $(document).on('click', '.search-item', function () {
-        const id = $(this).data('id');
-        const type = $(this).data('type');
-
-        if (type === 'article') window.location.href = `/article/${id}`;
-        if (type === 'category') window.location.href = `/category/${id}`;
-    });
-
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.search-container').length) {
-            $searchResults.removeClass('show').hide();
+            $searchResults.hide();
         }
     });
-})
+});
 $(document).on('click', '.rating-star', function () {
     const articleId = $('#rating-stars').data('article-id');
     const rating = $(this).data('rating');

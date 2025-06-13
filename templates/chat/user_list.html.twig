@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Start a conversation{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="mb-4">Start a conversation</h2>
+
+    <form method="get" class="mb-3">
+        <input type="text" name="q" class="form-control" placeholder="Search users by name or email..." value="{{ search }}">
+    </form>
+
+    {% if users is empty and search_results is empty %}
+        <p class="text-muted">No conversations yet and no search results.</p>
+    {% endif %}
+
+    {% if users is not empty %}
+        <h5 class="mt-4">Your Conversations</h5>
+        <ul class="list-group mb-4">
+            {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ user.fullName|default(user.email) }}</span>
+                    <a href="{{ path('chat_index', { receiverId: user.id }) }}" class="btn btn-outline-custom btn-sm">Chat</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if search_results is not empty %}
+        <h5 class="mt-4">Search Results</h5>
+        <ul class="list-group">
+            {% for user in search_results %}
+                {% if user not in users %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ user.fullName|default(user.email) }}</span>
+                        <a href="{{ path('chat_index', { receiverId: user.id }) }}" class="btn btn-outline-custom btn-sm">Chat</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

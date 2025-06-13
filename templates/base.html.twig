@@ -103,6 +103,28 @@
         a.text-decoration-none:hover {
             text-decoration: underline;
         }
+
+        .dropdown-menu .dropdown-item:hover,
+        .dropdown-menu .dropdown-item:focus,
+        .dropdown-menu .dropdown-item:active {
+            background-color: #FCA311;
+            color: white;
+         }
+        .pagination .page-link {
+        color: #FCA311;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #FCA311;
+            border-color: #FCA311;
+            color: white;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #d68d0e;
+            border-color: #d68d0e;
+            color: white;
+        }
     </style>
     {% endblock %}
 </head>
@@ -110,15 +132,16 @@
 <body>
     {% set authRoutes = ['app_login', 'app_register', 'app_forgot_password_request', 'app_reset_password'] %}
     {% if app.request.attributes.get('_route') not in authRoutes %}
-        <nav class="navbar navbar-expand-lg" style="background-color: #1B263B;">
+        <nav class="navbar navbar-expand-lg sticky-top"  style="background-color: #1B263B;">
             <div class="container">
                 <a class="navbar-brand text-white" href="{{ path('app_home') }}">My Blog</a>
 
-                <form class="d-flex ms-3 search-container position-relative" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" id="search-article">
-                    <div id="search-results" class="dropdown-menu position-absolute w-100"></div>
-                </form>
-
+               {% if app.user %}
+                    <form class="d-flex ms-3 search-container position-relative" role="search" method="get" action="{{ path('app_article_index') }}">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
+                        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                {% endif %}
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
@@ -126,15 +149,23 @@
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                     <ul class="navbar-nav mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-white {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_article' %}active{% endif %}" href="{{ path('app_article_index') }}">Articles</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_category' %}active{% endif %}" href="{{ path('app_category_index') }}">Categories</a>
-                        </li>
+                        {% if not is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_article' %}active{% endif %}" href="{{ path('app_article_index') }}">Articles</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_category' %}active{% endif %}" href="{{ path('app_category_index') }}">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_comment' %}active{% endif %}" href="{{ path('app_comment_index') }}">Comments</a>
+                            </li>
+                        {% endif %}
+
                         {% if app.user %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -157,10 +188,23 @@
                                 <a class="nav-link text-white {% if app.request.attributes.get('_route') == 'app_register' %}active{% endif %}" href="{{ path('app_register') }}">Register</a>
                             </li>
                         {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {% if app.request.attributes.get('_route') starts with 'app_admin' %}active{% endif %}" href="{{ path('app_admin_dashboard') }}">Admin</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
+        {% if app.user %}
+            <div class="ms-3 mt-2">
+                <a href="{{ path('chat_user_list') }}" class="btn btn-outline-custom btn-sm">
+                    💬 Chat
+                </a>
+            </div>
+        {% endif %}
+
     {% endif %}
 
     <main class="{% if app.request.attributes.get('_route') in authRoutes %}auth-container d-flex align-items-center justify-content-center{% else %}container py-4{% endif %}">
@@ -169,41 +213,61 @@
         </div>
     </main>
 
+    {% set hideBackButtonRoutes = ['app_home'] %}
+    {% if app.request.attributes.get('_route') not in hideBackButtonRoutes %}
+        <div class="position-fixed bottom-0 start-0 m-3">
+            <a href="{{ app.request.headers.get('referer') ?? path('app_home') }}" class="btn btn-outline-secondary btn-sm shadow">
+                ⬅ Retour
+            </a>
+        </div>
+    {% endif %}
+
+
     <!-- Scripts -->
     {% block javascripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.like-icon').forEach(icon => {
                 icon.addEventListener('click', function () {
+                    {% if not app.user %}
+                        alert('Please login to like articles.');
+                        return;
+                    {% endif %}
+
                     const wrapper = this.closest('.like-wrapper');
                     const articleId = wrapper.dataset.articleId;
 
-                    fetch(`/article/${articleId}/like`, {
+                    fetch(`/articles/${articleId}/like`, {
                         method: 'POST',
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    }).then(response => response.json())
-                      .then(data => {
-                          this.classList.toggle('fa-solid', data.liked);
-                          this.classList.toggle('fa-regular', !data.liked);
-                          this.classList.toggle('text-danger', data.liked);
-                          this.classList.toggle('text-muted', !data.liked);
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success !== false) {
+                            this.classList.toggle('fa-solid', data.liked);
+                            this.classList.toggle('fa-regular', !data.liked);
+                            this.classList.toggle('text-danger', data.liked);
+                            this.classList.toggle('text-muted', !data.liked);
 
-                          let countSpan = wrapper.querySelector('.like-count');
-                          if (data.likes > 0) {
-                              if (!countSpan) {
-                                  countSpan = document.createElement('span');
-                                  countSpan.classList.add('like-count', 'ms-1');
-                                  wrapper.appendChild(countSpan);
-                              }
-                              countSpan.innerText = data.likes;
-                          } else {
-                              if (countSpan) countSpan.remove();
-                          }
-                      });
+                            let countSpan = wrapper.querySelector('.like-count');
+                            if (data.likes > 0) {
+                                if (!countSpan) {
+                                    countSpan = document.createElement('span');
+                                    countSpan.classList.add('like-count', 'ms-1');
+                                    wrapper.appendChild(countSpan);
+                                }
+                                countSpan.innerText = data.likes;
+                            } else {
+                                if (countSpan) countSpan.remove();
+                            }
+                        }
+                    });
                 });
             });
         });
     </script>
+
+
     <script src="{{ asset('build/article_list.js') }}"></script>
     {% endblock %}
 </body>

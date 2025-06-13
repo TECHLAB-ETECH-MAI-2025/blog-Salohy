@@ -27,6 +27,7 @@ final class CategoryController extends AbstractController
     return $this->render('category/index.html.twig', [
         'categories' => $pagination,
     ]);
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
 }
 
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
@@ -55,6 +56,8 @@ final class CategoryController extends AbstractController
         return $this->render('category/show.html.twig', [
             'category' => $category,
         ]);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
     }
 
     #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
@@ -84,6 +87,7 @@ final class CategoryController extends AbstractController
         }
 
         return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 
 }
