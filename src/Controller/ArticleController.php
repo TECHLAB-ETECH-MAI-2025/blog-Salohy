@@ -77,11 +77,14 @@ class ArticleController extends AbstractController
         $form = $this->createForm(CommentForm::class, $comment);
         $form->handleRequest($request);
 
-        $ipAddress = $request->getClientIp();
-        $isLiked = $likeRepository->findOneBy([
-            'article' => $article,
-            'ipAddress' => $ipAddress,
-        ]) !== null;
+        $isLiked = false;
+        if ($this->getUser()) {
+            $isLiked = $likeRepository->findOneBy([
+                'article' => $article,
+                'user' => $this->getUser()
+            ]) !== null;
+        }
+
 
         $pagination = $paginator->paginate(
             $article->getComments(),
