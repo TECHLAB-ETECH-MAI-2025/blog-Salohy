@@ -43,6 +43,7 @@ class ArticleController extends AbstractController
             'articles' => $pagination,
             'search' => $query,
         ]);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
@@ -141,6 +142,10 @@ class ArticleController extends AbstractController
             'liked' => $liked,
             'likes' => count($article->getLikes()),
         ]);
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            return $this->json(['success' => false, 'message' => 'Admins cannot like articles'], 403);
+        }
+
     }
 
 
@@ -172,5 +177,6 @@ class ArticleController extends AbstractController
         }
 
         return $this->redirectToRoute('app_article_index');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     }
 }

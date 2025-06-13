@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ user.id ? 'Modifier l\'utilisateur' : 'Créer un utilisateur' }}{% endblock %}
+{% block title %}{{ user.id ? 'Update user' : 'Create user' }}{% endblock %}
 
 {% block body %}
 <div class="container mt-4">
-    <h2 class="mb-4">{{ user.id ? 'Modifier l\'utilisateur' : 'Créer un utilisateur' }}</h2>
+    <h2 class="mb-4">{{ user.id ? 'Update user' : 'Create user' }}</h2>
 
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">{{ message }}</div>
@@ -54,9 +54,9 @@
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('app_admin_users') }}" class="btn btn-outline-secondary">⬅ Retour</a>
+            <a href="{{ path('app_admin_users') }}" class="btn btn-outline-secondary">⬅ Back</a>
             <button type="submit" class="btn btn-primary">
-                {{ user.id ? 'Update' : 'Créer' }}
+                {{ user.id ? 'Update' : 'Create' }}
             </button>
         </div>
     {{ form_end(form) }}
