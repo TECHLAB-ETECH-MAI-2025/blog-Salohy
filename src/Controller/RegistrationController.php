@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // Envoi de l'e-mail de vérification
-            $this->emailVerifier->sendEmailConfirmation(
+            /*$this->emailVerifier->sendEmailConfirmation(
                 'app_verify_email',
                 $user,
                 (new TemplatedEmail())
@@ -52,7 +52,7 @@ class RegistrationController extends AbstractController
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
+            );*/
 
             // Connexion immédiate
             $security->login($user, LoginFormAuthenticator::class, 'main');
